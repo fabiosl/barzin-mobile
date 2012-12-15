@@ -12,27 +12,6 @@ DELETE FROM itens;
 
 DELETE FROM categorias;
 
-DELETE FROM cardapios;
-
 DELETE FROM bares;
 
 DELETE FROM usuarios;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

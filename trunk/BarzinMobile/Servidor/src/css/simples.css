@@ -1,0 +1,148 @@
+body {
+    font-family: Arial, Trebuchet MS, Verdana, Tahoma; 
+    font-size: 12px; 
+    background-color: #ffffff;
+    margin: 0;
+}
+
+table {
+    font-family: Arial, Trebuchet MS, Verdana, Tahoma; 
+    font-size: 12px; 
+}
+
+img {
+	border: 0;
+}
+
+a {
+	color: #ff6c00;
+	font-weight: bold;
+	text-decoration: none;;
+}
+
+a:hover {
+	color: #65ba00;
+	text-decoration: underline;
+}
+
+h1 {
+	font-weight: normal;
+	font-size: 32px;
+	color: #3a6b00;
+}
+
+
+table.semBorda {
+	width: 0;	
+}
+
+tr.semBorda, td.semBorda, th.semBorda {
+	border: 0;
+}
+
+.semborda {
+	border: 0;
+}
+
+.titulo1 {
+	font-size: 30px;
+	font-weight: bold;
+	display: inline;
+}
+
+#janela {
+	background-color: #fff;
+}
+
+.loading {
+	background-color: #ff0;
+}
+
+.warning {
+	background-color: #fff1a7;
+	padding: 10px;
+	margin-bottom: 20px;
+	border: 1px solid #ffd600;
+}
+
+.erro {
+	background-color: #ffa7a7;
+	border: 1px solid #ff0000;
+	padding: 10px;
+	margin-bottom: 20px;
+}
+
+.msg {
+	background-color: #caffa7;
+	border: 1px solid #66ff00;
+	padding: 10px;
+	margin-bottom: 20px;
+}
+
+.topo {
+	background: #ffd700 url('../img/fundo_topo.png') repeat-x;
+}
+
+.logado {
+	color: #ffffff;
+	position: absolute;
+	top: 50px;
+	margin-left: 20px;
+	width: 300px;
+}
+
+.link_logado {
+	color: #ffffff;
+}
+
+.link_logado:hover {
+	color: #8aff00;
+}
+
+.principal {
+    width: 800px;
+    background-color: #ffffff;
+    margin: auto;
+    text-align: justify;
+    padding: 0;
+}
+
+.conteudo {
+	padding: 20px;
+	padding-top: 50px;
+	min-height: 300px;
+}
+
+.rodape {
+	color: #ffffff;
+	background: #000000;
+	text-align: center;
+	padding: 20px;
+	font-size: 10px;
+}
+
+.titulo_secao {
+	font-weight: normal;
+	font-size: 32px;
+	color: #3a6b00;
+}
+
+.titulo_secao:hover {
+	text-decoration: none;
+	color: #3a6b00;
+}
+
+.verde {
+	color: #65ba00;
+}
+
+.verde:hover {
+	color: #8aff00;
+}
+
+/*\*/
+* html .principal {
+    w\idth: 794px; /* for IE6 in standards mode */
+    height: 300px;
+}
+/**/
