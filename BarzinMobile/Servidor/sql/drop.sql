@@ -12,8 +12,6 @@ DROP TABLE itens;
 
 DROP TABLE categorias;
 
-DROP TABLE cardapios;
-
 DROP TABLE bares;
 
 DROP TABLE usuarios;
