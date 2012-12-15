@@ -1,15 +1,15 @@
 <?php
 include_once 'bean.php';
 
-class Tablet extends Bean {
+class Mesa extends Bean {
     
-	protected $id, $bar_id, $nome, $disponivel;
+	protected $id, $bar_id, $nome, $codigo;
 	
-	public function Tablet($nome = "", $bar_id = 0, $id = 0, $disponivel = 1) {
+	public function Mesa($nome = "", $bar_id = 0, $id = 0, $codigo = "") {
 		$this->nome = $nome;
 		$this->bar_id = $bar_id;
 		$this->id = $id;
-		$this->disponivel = $disponivel;
+		$this->codigo = $codigo;
 	}
 	
 	public function get_id() {
@@ -32,12 +32,12 @@ class Tablet extends Bean {
 		$this->nome = $nome;
 	}
 	
-	public function set_disponivel($disponivel) {
-		$this->disponivel = $disponivel;
+	public function set_codigo($codigo) {
+		$this->codigo = $codigo;
 	}
 	
-	public function get_disponivel() {
-		return $this->disponivel;
+	public function get_codigo() {
+		return $this->codigo;
 	}
 }
 	

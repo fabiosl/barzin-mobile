@@ -1,16 +1,16 @@
 <?php
 include_once 'transformavel_json.php';
 
-Class Tablet_lista extends Transformavel_json {
+Class Mesa_lista extends Transformavel_json {
 	
 	protected $lista;
 	
-	public function Tablet_lista() {
+	public function Mesa_lista() {
 		$this->lista = array();
 	}
 	
-	public function adicionar($tablet) {
-		$this->lista[] = $tablet;
+	public function adicionar($mesa) {
+		$this->lista[] = $mesa;
 	}
 	
 	public function get_lista() {

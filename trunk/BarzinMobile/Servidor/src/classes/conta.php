@@ -5,12 +5,12 @@ include_once 'pedido.php';
 
 class Conta extends Bean {
 	
-	// $data_hora_abertura e $data_hora_abertura serÃ£o timestamps
-    protected $id, $tablet_id, $estado, $data_hora_abertura, $data_hora_fechamento, $pedidos, $total;
+	// $data_hora_abertura e $data_hora_abertura serão timestamps
+    protected $id, $mesa_id, $estado, $data_hora_abertura, $data_hora_fechamento, $pedidos, $total;
     
-    public function Conta($tablet_id = -1, $estado = "Aberta", $data_hora_abertura = 0, $data_hora_fechamento = 0, $id = -1, $pedidos = array(), $total = 0) {
+    public function Conta($mesa_id = -1, $estado = "Aberta", $data_hora_abertura = 0, $data_hora_fechamento = 0, $id = -1, $pedidos = array(), $total = 0) {
     	$this->id = $id;
-    	$this->tablet_id = $tablet_id;
+    	$this->mesa_id = $mesa_id;
     	$this->estado = $estado;
     	if ($data_hora_abertura == 0) {
     		$this->data_hora_abertura = time();
@@ -62,8 +62,8 @@ class Conta extends Bean {
     	return $this->id;
     }
     
-    public function get_tablet_id() {
-    	return $this->tablet_id;
+    public function get_mesa_id() {
+    	return $this->mesa_id;
     }
     
     public function get_estado() {
