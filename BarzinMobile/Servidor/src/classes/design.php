@@ -53,7 +53,7 @@ class Design {
 		}
 		echo "
 		 <div class=\"topo\" align=\"right\">
-		 	<div style=\"position: relative; width: 100%; height: 200px; background: url(../img/degrade.png) repeat-x; z-index: 0;\">
+		 	<div style=\"position: relative; width: 100%; height: 200px; background: url(".$this->raiz."/img/degrade.png) repeat-x; z-index: 0;\">
 		 		<a href=\"".$this->raiz."/index.php\"><img src=\"".$this->raiz."/img/topo.png\" /></a>
 		 	</div>
 		 </div>

@@ -135,7 +135,7 @@ function prepararExcluirMesa(idMesa, nomeMesa, numeroContas) {
 }
 
 function excluirMesa(idMesa) {
-	xmlhttp.open("get", "../scripts/servicos_mesa.php?operacao=excluir_tablet&id=" + idMesa, true);
+	xmlhttp.open("get", "../scripts/servicos_mesa.php?operacao=excluir_mesa&id=" + idMesa, true);
 	xmlhttp.onreadystatechange = function () {
 		if (xmlhttp.readyState == 4 & xmlhttp.status == 200) {
 			if (xmlhttp.responseText == "ok") {

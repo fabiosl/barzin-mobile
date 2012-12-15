@@ -5,10 +5,10 @@ $banco = new DAO();
 
 $operacao = $_REQUEST["operacao"];
 
-// Excluir conta. o Excluir tablet tá lá embaixo
+// Excluir conta. o Excluir mesa tá lá embaixo
 if ($operacao == "excluir") {
 	$conta = $banco->recupera_conta_aberta($_REQUEST["id"]);
-	$tablet_id = $conta->get_tablet_id();
+	$mesa_id = $conta->get_mesa_id();
 
 	$teve_pedido = false;
 	foreach ($conta->get_pedidos() as $pedido) {
@@ -17,7 +17,7 @@ if ($operacao == "excluir") {
 		}
 	}
 	
-	foreach ($banco->recupera_pedidos_pendentes_do_tablet($tablet_id) as $pedido) {
+	foreach ($banco->recupera_pedidos_pendentes_da_mesa($mesa_id) as $pedido) {
 		$excluir = $banco->excluir_pedido($pedido->get_id());
 		if ($excluir != "ok") {
 			echo $excluir;
@@ -25,24 +25,6 @@ if ($operacao == "excluir") {
 		}
 	}
 
-	$marcar_pra_apagar = $banco->marcar_pra_apagar_localmente($tablet_id);
-	if ($marcar_pra_apagar != "ok") {
-		echo $marcar_pra_apagar;
-		exit;
-	}
-	
-	$excluir_msgs = $banco->excluir_msgs_enviadas_por_tablet($tablet_id);
-	if ($excluir_msgs != "ok") {
-		echo $excluir_msgs;
-		exit;
-	}
-	
-	$excluir_msgs = $banco->excluir_msgs_para_tablet($tablet_id);
-	if ($excluir_msgs != "ok") {
-		echo $excluir_msgs;
-		exit;
-	}
-	
 	if ($teve_pedido) {
 		$conta->set_estado('Fechada');
 		$conta->set_data_hora_fechamento(time());
@@ -58,35 +40,35 @@ if ($operacao == "excluir") {
 elseif ($operacao == "criar") {
 	$bar_id = $_REQUEST["bar_id"];
 	$nome = $_REQUEST["nome"];
-	$tablet = new Tablet();
-	$tablet->set_nome($nome);
-	$tablet->set_bar_id($bar_id);
-	echo $banco->salvar_tablet($tablet);
+	$mesa = new Mesa();
+	$mesa->set_nome($nome);
+	$mesa->set_bar_id($bar_id);
+	echo $banco->salvar_mesa($mesa);
 	exit;
 }
 
 elseif ($operacao == "alterar") {
 	$id = $_REQUEST["id"];
 	$nome = $_REQUEST["nome"];
-	$tablet = $banco->recupera_tablet($id);
-	if (get_class($tablet) == "Erro") {
-		echo $tablet->get_erro();
+	$mesa = $banco->recupera_mesa($id);
+	if (get_class($mesa) == "Erro") {
+		echo $mesa->get_erro();
 		exit;
 	}
-	$tablet->set_nome($nome);
-	echo $banco->salvar_tablet($tablet);
+	$mesa->set_nome($nome);
+	echo $banco->salvar_mesa($mesa);
 	exit;
 }
 
-elseif ($operacao == "excluir_tablet") {
+elseif ($operacao == "excluir_mesa") {
 	$id = $_REQUEST["id"];
-	$tablet = $banco->recupera_tablet($id);
-	if (get_class($tablet) == "Erro") {
-		echo $tablet->get_erro();
+	$mesa = $banco->recupera_mesa($id);
+	if (get_class($mesa) == "Erro") {
+		echo $mesa->get_erro();
 		exit;
 	}
 	
-	echo $banco->excluir_tablet($tablet);
+	echo $banco->excluir_mesa($mesa);
 	exit;
 }
 ?>

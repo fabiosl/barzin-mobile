@@ -52,42 +52,23 @@ echo "
  </div>
  <div id=\"salvando_nova_mesa\" style=\"display: none;\">Salvando nova mesa...</div>
  <br/><br/>
- <h2>Mesas associadas a algum tablet</h2>
 ";
 
-$mesas_ocupadas = $banco->recupera_tablets_ocupados($bar->get_id());
+$mesas = $banco->recupera_mesas($bar->get_id());
 
-foreach ($mesas_ocupadas->get_lista() as $mesa) {
-	echo "<a href=\"mesa.php?id=".$mesa->get_id()."\">".$mesa->get_nome()."</a> (";
+foreach ($mesas->get_lista() as $mesa) {
+	echo "<a href=\"detalhes.php?id=".$mesa->get_id()."\">".$mesa->get_nome()."</a> (";
 	if ($banco->consulta_ha_conta_aberta($mesa->get_id())) {
 		echo "Conta aberta";
 	}
 	else {
 		echo "Não há conta aberta";
 	}
-	echo ")<br/>";
-}
-
-echo "
- <br/><br/>
- <h2>Mesas não associadas a nenhum tablet</h2>
- Essas mesas estão disponíveis para associação a algum tablet (configuração feita diretamente no mesmo).
- <br/><br/>
-";
-
-
-$mesas_disponiveis = $banco->recupera_tablets_disponiveis($bar->get_id());
-
-foreach ($mesas_disponiveis->get_lista() as $mesa) {
-	echo "<a href=\"mesa.php?id=".$mesa->get_id()."\">".$mesa->get_nome()."</a> (";
-	if ($banco->consulta_ha_conta_aberta($mesa->get_id())) {
-		echo "Conta aberta";
-	}
-	else {
-		echo "Não há conta aberta";
-	}
-	
-	echo ")<br/>";
+	echo "
+	 )<br/>
+	 Código: ".$mesa->get_codigo()."
+	 <p/>
+	";
 }
 ?>
 

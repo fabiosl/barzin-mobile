@@ -8,7 +8,7 @@ $banco = new DAO();
 $design = new Design("..");
 $design->imprimir_topo();
 
-$mesa = $banco->recupera_tablet($_REQUEST["id"]);
+$mesa = $banco->recupera_mesa($_REQUEST["id"]);
 
 $pode_alterar = true;
 if ($banco->consulta_ha_conta_aberta($mesa->get_id())) {
@@ -57,7 +57,7 @@ if ($pode_alterar) {
 	echo "
 	 <div id=\"links_mesa\" style=\"display: inline-block;\">
  	 <a href=\"javascript: void(0);\" onclick=\"prepararEditarMesa()\">".$design->get_imagem('lapis.png', 'Editar')."</a> 
- 	 <a href=\"javascript: void(0);\" onclick=\"prepararExcluirMesa(".$mesa->get_id().", '".$mesa->get_nome()."', ".$banco->consulta_num_contas_no_tablet($mesa->get_id()).")\">".$design->get_imagem('excluir.png', 'Excluir')."</a>
+ 	 <a href=\"javascript: void(0);\" onclick=\"prepararExcluirMesa(".$mesa->get_id().", '".$mesa->get_nome()."', ".$banco->consulta_num_contas_na_mesa($mesa->get_id()).")\">".$design->get_imagem('excluir.png', 'Excluir')."</a>
 	 </div><br/>
 	 <div id=\"carregando_mesa\" style=\"display: none;\">
 		Carregando...
@@ -71,18 +71,7 @@ if ($pode_alterar) {
 	";
 }
 echo "
- <br/>
- Mesa atualmente 
-";
-if ($mesa->get_disponivel()) {
-	echo "não associada a nenhum tablet.";
-}
-else {
-	echo "associada a um tablet.";
-}
-
-
-echo "
+ <br/>Código: ".$mesa->get_codigo()."
  <br/><br/>
  Contas registradas nessa mesa:<br/>
  <table border=\"1\" cellpadding=\"5\">
@@ -98,6 +87,7 @@ $conta_aberta = $banco->recupera_conta_aberta($mesa->get_id());
 $contas_fechadas = $banco->recupera_contas_fechadas($mesa->get_id());
 
 if ($conta_aberta || count($contas_fechadas) > 0) {
+	// Só pode haver uma conta aberta
 	if ($conta_aberta != null) {
 		echo "
 		 <tr align=\"center\">
