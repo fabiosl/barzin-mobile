@@ -56,8 +56,9 @@ echo "
 if ($pode_alterar) {
 	echo "
 	 <div id=\"links_mesa\" style=\"display: inline-block;\">
- 	 <a href=\"javascript: void(0);\" onclick=\"prepararEditarMesa()\">".$design->get_imagem('lapis.png', 'Editar')."</a> 
- 	 <a href=\"javascript: void(0);\" onclick=\"prepararExcluirMesa(".$mesa->get_id().", '".$mesa->get_nome()."', ".$banco->consulta_num_contas_na_mesa($mesa->get_id()).")\">".$design->get_imagem('excluir.png', 'Excluir')."</a>
+ 	 <a href=\"javascript: void(0);\" onclick=\"prepararEditarMesa()\">".$design->get_imagem('lapis.png', 'Editar')."</a>
+ 	 <span style=\"display: none\" id=\"nomeMesa\">".$mesa->get_nome()."</span> 
+ 	 <a href=\"javascript: void(0);\" onclick=\"prepararExcluirMesa(".$mesa->get_id().", ".$banco->consulta_num_contas_na_mesa($mesa->get_id()).")\">".$design->get_imagem('excluir.png', 'Excluir')."</a>
 	 </div><br/>
 	 <div id=\"carregando_mesa\" style=\"display: none;\">
 		Carregando...
@@ -91,7 +92,12 @@ if ($conta_aberta || count($contas_fechadas) > 0) {
 	if ($conta_aberta != null) {
 		echo "
 		 <tr align=\"center\">
-			<td><a href=\"ver_conta.php?id=".$conta_aberta->get_id()."\" class=\"verde\">Aberta</a></td>
+			<td>
+				<a href=\"ver_conta.php?id=".$conta_aberta->get_id()."\" class=\"verde\">
+					Aberta<br/>
+					(".count($mesa->get_pessoas())." pessoa".(count($mesa->get_pessoas()) > 1 ? "s" : "").")
+				</a>
+			</td>
 			<td><a href=\"ver_conta.php?id=".$conta_aberta->get_id()."\" class=\"verde\">".$conta_aberta->get_data_hora_abertura_formatado()."</a></td>
 			<td>-</td>
 			<td><a href=\"ver_conta.php?id=".$conta_aberta->get_id()."\" class=\"verde\">".$conta_aberta->get_total_formatado()."</a></td>
