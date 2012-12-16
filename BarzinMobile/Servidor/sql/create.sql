@@ -1,14 +1,14 @@
--- Antes de tudo, criar o banco e o usuário:
+-- Antes de tudo, criar o banco e o usuï¿½rio:
 --
 -- Entra no phpMyAdmin:
 --	Tela inicial > Banco de Dados > Criar novo banco de dados
 --		banco: barzin
 --		collation: utf8_general_ci
---	Depois de criado, entrar em Tela inicial > barzin (na lista à esquerda) > Privilégios > Adicionar novo usuário
---		Nome do usuário: barzin
+--	Depois de criado, entrar em Tela inicial > barzin (na lista ï¿½ esquerda) > Privilï¿½gios > Adicionar novo usuï¿½rio
+--		Nome do usuï¿½rio: barzin
 --		Servidor: localhost
 --		Senha: 123456
---		Conceder todos os privilégios no banco de dados "barzin"
+--		Conceder todos os privilï¿½gios no banco de dados "barzin"
 
 CREATE TABLE usuarios (
     login   VARCHAR(20)			PRIMARY KEY,

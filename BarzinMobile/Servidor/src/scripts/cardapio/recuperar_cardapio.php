@@ -6,10 +6,10 @@ include_once '../../classes/erro.php';
 
 $banco = new DAO();
 
-$id_tablet = $_REQUEST["id_tablet"];
+$codigo_mesa = $_REQUEST["codigo_mesa"];
 $versao_cardapio = $_REQUEST["versao_cardapio"];
 
-$bar = $banco->recupera_bar_pelo_tablet($id_tablet);
+$bar = $banco->recupera_bar_pelo_codigo_da_mesa($codigo_mesa);
 
 if (get_class($bar) == 'Erro') {
 	echo $bar->get_erro();

@@ -37,7 +37,7 @@ else {
 	$cumprimento = "Boa noite";
 }
 
-$numero_mesas = count($banco->recupera_mesas($bar->get_id())->get_lista());
+$numero_mesas = count($banco->recupera_mesas($bar->get_id()));
 $numero_itens = $banco->consulta_num_itens_do_bar($bar->get_id());
 $numero_categorias = $banco->consulta_num_categorias_do_bar($bar->get_id());
 $numero_mesas_abertas = $banco->consulta_num_mesas_abertas($bar->get_id());

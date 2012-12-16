@@ -56,16 +56,19 @@ echo "
 
 $mesas = $banco->recupera_mesas($bar->get_id());
 
-foreach ($mesas->get_lista() as $mesa) {
+foreach ($mesas as $mesa) {
 	echo "<a href=\"detalhes.php?id=".$mesa->get_id()."\">".$mesa->get_nome()."</a> (";
-	if ($banco->consulta_ha_conta_aberta($mesa->get_id())) {
-		echo "Conta aberta";
+	$numero_pessoas = count($mesa->get_pessoas());
+	if ($numero_pessoas > 0) {
+		echo "Conta aberta - $numero_pessoas pessoa";
+		if ($numero_pessoas > 1) {
+			echo "s";
+		}
 	}
 	else {
 		echo "Não há conta aberta";
 	}
-	echo "
-	 )<br/>
+	echo ")<br/>
 	 Código: ".$mesa->get_codigo()."
 	 <p/>
 	";

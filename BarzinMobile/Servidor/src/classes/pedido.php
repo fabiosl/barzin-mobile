@@ -5,9 +5,9 @@ include_once 'bean.php';
 class Pedido extends Bean {
 	
 	// $data_hora será um timestamp
-    protected $id, $item_id, $conta_id, $quantidade, $data_hora, $estado, $hora_formatado;
+    protected $id, $item_id, $conta_id, $quantidade, $data_hora, $estado, $hora_formatado, $pessoas;
     
-    public function Pedido($item_id = -1, $quantidade = 0, $estado = "Pendente", $id = -1, $conta_id = -1, $data_hora = 0) {
+    public function Pedido($item_id = -1, $quantidade = 0, $estado = "Pendente", $pessoas = array(), $id = -1, $conta_id = -1, $data_hora = 0) {
     	$this->id = $id;
     	$this->item_id = $item_id;
     	$this->conta_id = $conta_id;
@@ -20,6 +20,11 @@ class Pedido extends Bean {
     	}
     	$this->hora_formatado = date("H:i:s", $this->data_hora);
     	$this->estado = $estado;
+    	$this->pessoas = $pessoas;
+    }
+    
+    public function adiciona_pessoa($nova_pessoa) {
+    	$this->pessoas[] = $nova_pessoa;
     }
     
     public function get_data_hora_mysql() {
@@ -64,6 +69,10 @@ class Pedido extends Bean {
     
     public function get_estado() {
     	return $this->estado;
+    }
+    
+    public function get_pessoas() {
+    	return $this->pessoas;
     }
     
     public function set_estado($estado) {

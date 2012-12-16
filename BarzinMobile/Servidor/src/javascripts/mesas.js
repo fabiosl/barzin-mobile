@@ -99,6 +99,8 @@ function editarMesa() {
 		if (xmlhttp.readyState == 4 & xmlhttp.status == 200) {
 			if (xmlhttp.responseText == "ok") {
 				nomeMesa.innerHTML = novoNome;
+				var excluir = document.getElementById('nomeMesa');
+				excluir.innerHTML = novoNome;
 				esconder('carregando_mesa');
 				mostrar('links_mesa');
 			}
@@ -115,7 +117,8 @@ function editarMesa() {
 	return false;
 }
 
-function prepararExcluirMesa(idMesa, nomeMesa, numeroContas) {
+function prepararExcluirMesa(idMesa, numeroContas) {
+	var nomeMesa = document.getElementById('nomeMesa').innerHTML;
 	var msg = 'Tem certeza que deseja excluir a mesa ' + nomeMesa + '?';
 	if (numeroContas > 0 ) {
 		msg += '\nA mesa possui:';
