@@ -5,10 +5,6 @@
   * Recebe: codigo_mesa, versao_cardapio (versão do cardápio que o dispositivo já tem)
   * Retorna: JSON do cardápio caso a versão do tablet não for a mais atual, 0 caso contrário
 
-
-<font color="#FF0000">
-= DAQUI PRA FRENTE AINDA NÃO É A VERSÃO NOVA = 
-
 = cardapio/recuperar_imagem_item.php =
 
   * Recebe: id_item
@@ -18,6 +14,9 @@
 
   * Recebe: id_item
   * Retorna: Imagem do thumb do item
+
+<font color="#FF0000">
+= DAQUI PRA FRENTE AINDA NÃO É A VERSÃO NOVA = 
 
 = mesas/associar_a_tablet.php =
 
