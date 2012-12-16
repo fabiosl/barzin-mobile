@@ -25,11 +25,13 @@
   * Recebe: codigo_mesa
   * Retorna: 1 se houver uma conta aberta para essa mesa, 0 caso contrário
 
-<font color="#ffd700">
 = pessoas/adicionar_pessoa.php = 
   * Recebe: nome_pessoa, codigo_mesa
-  * Retorna; JSON da pessoa adicionada, ou JSON de erro
-</font>
+  * Retorna: JSON da pessoa adicionada, ou JSON de erro
+
+= pessoas/remover_pessoa.php = 
+  * Recebe: id_pessoa
+  * Retorna: "ok" se remover, string mostrando o erro caso contrário
 
 <font color="#FF0000">
 = DAQUI PRA FRENTE AINDA NÃO É A VERSÃO NOVA = 
