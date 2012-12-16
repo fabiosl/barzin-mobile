@@ -59,9 +59,4 @@
 
   * Recebe: item_id, quantidade, tablet_id
   * Retorna: JSON do pedido ou JSON de erro
-
-= propagandas/recuperar_propagandas.php =
-
-  * Recebe: nada
-  * Retorna: JSON de array com as URLs das imagens das propagandas
 </font>
