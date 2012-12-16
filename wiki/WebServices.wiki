@@ -1,5 +1,14 @@
 #summary Serviços em raiz/scripts/
 
+<font color="#FFD700">
+= bares/recuperar_bares.php =
+
+  * Recebe: nada
+  * Retorna: JSON contendo um array com os ids e nomes de todos os bares cadastrados
+
+=  =
+</font>
+
 = cardapio/recuperar_cardapio.php =
 
   * Recebe: codigo_mesa, versao_cardapio (versão do cardápio que o dispositivo já tem)
@@ -14,12 +23,12 @@
 
   * Recebe: id_item
   * Retorna: Imagem do thumb do item
+<font color="#FFD700">
+= mesas/conectar_a_mesa.php =
 
-= mesas/recuperar_mesa.php =
-
-  * Recebe: codigo_mesa
+  * Recebe: codigo_mesa, id_bar
   * Retorna: JSON da mesa, ou JSON de erro
-
+</font>
 = pessoas/adicionar_pessoa.php = 
   * Recebe: nome_pessoa, codigo_mesa
   * Retorna: JSON da pessoa adicionada, ou JSON de erro
