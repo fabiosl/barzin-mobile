@@ -29,6 +29,10 @@
   * Recebe: nome_pessoa, codigo_mesa
   * Retorna: JSON da pessoa adicionada, ou JSON de erro
 
+= pessoas/alterar_pessoa.php = 
+  * Recebe: nome_pessoa, id_pessoa
+  * Retorna: JSON da pessoa alterada, ou JSON de erro
+
 = pessoas/remover_pessoa.php = 
   * Recebe: id_pessoa
   * Retorna: "ok" se remover, string mostrando o erro caso contrário
