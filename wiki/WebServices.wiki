@@ -5,6 +5,10 @@
   * Recebe: id_tablet, versao_cardapio
   * Retorna: JSON do cardápio caso a versão do tablet não for a mais atual, 0 caso contrário
 
+
+<font color="#FF0000">
+= DAQUI PRA FRENTE AINDA NÃO É A VERSÃO NOVA = 
+
 = cardapio/recuperar_imagem_item.php =
 
   * Recebe: id_item
@@ -94,3 +98,4 @@ Esse serviço basicamente só seta a propriedade "disponivel" do tablet lá no B
 
   * Recebe: nada
   * Retorna: JSON de array com as URLs das imagens das propagandas
+</font>
