@@ -15,15 +15,15 @@
   * Recebe: id_item
   * Retorna: Imagem do thumb do item
 
-= mesas/consulta_se_esta_aberta.php =
-
-  * Recebe: codigo_mesa
-  * Retorna: 1 se houver uma conta aberta para essa mesa, 0 caso contrário
-
 = mesas/consulta_codigo.php =
 
   * Recebe: codigo_mesa
   * Retorna: 1 se for um código válido, 0 caso contrário
+
+= mesas/consulta_se_esta_aberta.php =
+
+  * Recebe: codigo_mesa
+  * Retorna: 1 se houver uma conta aberta para essa mesa, 0 caso contrário
 
 <font color="#FF0000">
 = DAQUI PRA FRENTE AINDA NÃO É A VERSÃO NOVA = 
