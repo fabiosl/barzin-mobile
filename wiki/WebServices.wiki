@@ -15,19 +15,13 @@
   * Recebe: id_item
   * Retorna: Imagem do thumb do item
 
-<font color="#FF0000">
-= DAQUI PRA FRENTE AINDA NÃO É A VERSÃO NOVA = 
-
-= mesas/associar_a_tablet.php =
-
-  * Recebe: id_tablet
-  * Retorna: JSON com o nome do bar se conseguir, JSON de erro caso contrário.
-Esse serviço basicamente só seta a propriedade "disponivel" do tablet lá no BD pra false, e não deixa você associar a alguma mesa que já está associada (que tava com o "disponivel" false)
-
 = mesas/consulta_se_esta_aberta.php =
 
-  * Recebe: id_tablet
-  * Retorna: 1 se houver uma conta aberta para esse tablet, 0 caso contrário
+  * Recebe: codigo_mesa
+  * Retorna: 1 se houver uma conta aberta para essa mesa, 0 caso contrário
+
+<font color="#FF0000">
+= DAQUI PRA FRENTE AINDA NÃO É A VERSÃO NOVA = 
 
 = mesas/desassociar_tablet.php =
 
