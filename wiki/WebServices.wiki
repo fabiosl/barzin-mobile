@@ -28,36 +28,6 @@
 <font color="#FF0000">
 = DAQUI PRA FRENTE AINDA NÃO É A VERSÃO NOVA = 
 
-= mensagens/enviar_mensagem.php = 
-
-  * Recebe: id_remetente, id_destinatario, mensagem
-  * Retorna: JSON da mensagem ou JSON de erro
-
-= mensagens/precisa_apagar_localmente_de_quem.php =
-
-  * Recebe: id_tablet
-  * Retorna: array de todos os ids dos tablets de quem aquele tablet deve apagar as mensagens. Exemplo de retorno: {"ids_de_quem_precisa_apagar":["1", "3"]}. Depois de chamar o serviço, são apagadas essas informações do banco de dados remoto também!
-
-= mensagens/quantas_mensagens_novas_remetente.php =
-
-  * Recebe: id_tablet, id_remetente
-  * Retorna: Número de quantas mensagens novas existem para aquele tablet, de um remetente específico
-
-= mensagens/quantas_mensagens_novas_total.php =
-
-  * Recebe: id_tablet
-  * Retorna: Um mapa dessa forma: "quantidade" => Número de quantas mensagens novas existem para aquele tablet; "remetentes" => Array dos ids dos remetentes de mensagens novas para aquele tablet
-
-= mensagens/quantas_mensagens_por_cada_remetente.php =
-
-  * Recebe: id_tablet
-  * Retorna: Lista contendo a quantidade de mensagens ainda não lidas de cada remetente. A lista contem o ID e nome do remetente, além da quantidade de mensagens novas.
-
-= mensagens/recuperar_mensagens.php =
-
-  * Recebe: id_tablet, id_remetente
-  * Retorna: JSON da lista de mensagens não-lidas destinadas a id_tablet, enviadas por id_remetente. *<font color="#FF0000">ATENÇÃO:</font>* Essas mensagens recuperadas são marcadas como entregues.
-
 = pedidos/alterar_pedido.php = 
 
   * Recebe: pedido_id, quantidade, estado
