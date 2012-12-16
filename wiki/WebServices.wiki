@@ -23,20 +23,6 @@
 <font color="#FF0000">
 = DAQUI PRA FRENTE AINDA NÃO É A VERSÃO NOVA = 
 
-= mesas/desassociar_tablet.php =
-
-  * Recebe: id_tablet, user, senha
-  * Retorna: "ok" se conseguir, mensagem de erro caso contrário. Se user/senha forem inválidos, ou não forem do mesmo bar do tablet, retorna erro de "Login inválido" *<font color="#FF0000">ATENÇÃO:</font>* Ao desassociar, as mensagens destinadas a aquele tablet são apagadas.
-
-= mesas/mesa_ainda_existe.php =
-  * Recebe: id_tablet
-  * Retorna: 1 se a mesa (tablet) ainda existir, 0 caso ela tenha sido deletada
-
-= mesas/mesas_disponiveis_para_associacao.php =
-
-  * Recebe: user, senha
-  * Retorna um JSON com a lista das mesas disponíveis para associação daquele bar que o user é admin, ou JSON de erro caso o login falhe ou o user não seja admin
-
 = mensagens/enviar_mensagem.php = 
 
   * Recebe: id_remetente, id_destinatario, mensagem
