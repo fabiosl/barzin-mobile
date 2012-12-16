@@ -2,7 +2,7 @@
 
 = cardapio/recuperar_cardapio.php =
 
-  * Recebe: id_tablet, versao_cardapio
+  * Recebe: codigo_mesa, versao_cardapio (versão do cardápio que o dispositivo já tem)
   * Retorna: JSON do cardápio caso a versão do tablet não for a mais atual, 0 caso contrário
 
 
