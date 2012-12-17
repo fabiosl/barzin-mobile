@@ -337,6 +337,17 @@ class DAO {
     	return new Erro("Não foi encontrada mesa com o código $codigo_mesa");
     }
     
+    function recupera_bares_todos() {
+    	$consulta = mysql_query("SELECT id   
+    								FROM bares 
+    								ORDER BY nome");
+    	$bares = array();
+    	while (list($id) = mysql_fetch_array($consulta)) {
+    		$bares[] = $this->recupera_bar($id);
+    	}
+    	return $bares;
+    }
+    
     function recupera_cardapio($bar) {
     	$id_bar = mysql_real_escape_string($bar->get_id());
     	$cardapio = new Cardapio();
