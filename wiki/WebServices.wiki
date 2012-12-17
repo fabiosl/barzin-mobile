@@ -1,13 +1,9 @@
 #summary Serviços em raiz/scripts/
 
-<font color="#FFD700">
 = bares/recuperar_bares.php =
 
   * Recebe: nada
   * Retorna: JSON contendo um array com os ids e nomes de todos os bares cadastrados
-
-=  =
-</font>
 
 = cardapio/recuperar_cardapio.php =
 
