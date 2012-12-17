@@ -489,13 +489,17 @@ class DAO {
     	return $nome;
     }
     
-    function recupera_mesa_pelo_codigo($codigo_mesa) {
+    function recupera_mesa_pelo_codigo($codigo_mesa, $id_bar) {
     	$codigo_mesa = mysql_real_escape_string($codigo_mesa);
+    	$id_bar = mysql_real_escape_string($id_bar);
+    	
     	$consulta_mesa = mysql_query("SELECT m.id
                 						FROM mesas m
-                						WHERE m.codigo = '$codigo_mesa'");
+                						WHERE m.codigo = '$codigo_mesa'
+                							AND m.bar_id = $id_bar");
+                							
     	if (mysql_num_rows($consulta_mesa) != 1) {
-    		return new Erro("Não foi encontrada mesa com o código $codigo_mesa");
+    		return new Erro("Não foi encontrada mesa com o código $codigo_mesa, no bar com id $id_bar");
     	}
     	list($id) = mysql_fetch_array($consulta_mesa);
     	return $this->recupera_mesa($id);
