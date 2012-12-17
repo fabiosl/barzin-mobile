@@ -19,12 +19,12 @@
 
   * Recebe: id_item
   * Retorna: Imagem do thumb do item
-<font color="#FFD700">
+
 = mesas/conectar_a_mesa.php =
 
   * Recebe: codigo_mesa, id_bar
   * Retorna: JSON da mesa, ou JSON de erro
-</font>
+
 = pessoas/adicionar_pessoa.php = 
   * Recebe: nome_pessoa, codigo_mesa
   * Retorna: JSON da pessoa adicionada, ou JSON de erro
