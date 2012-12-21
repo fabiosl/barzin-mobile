@@ -50,11 +50,6 @@
   * Recebe: pedido_id, quantidade, estado
   * Retorna: JSON do pedido ou JSON de erro (uma bosta isso ne, eu sei)
 
-= pedidos/atender_pedido.php = 
-
-  * Recebe: pedido_id
-  * Retorna: string "ok" se tiver sucesso, string mostrando o erro caso contrário
-
 = pedidos/excluir_pedido.php = 
 
   * Recebe: pedido_id
