@@ -37,6 +37,11 @@
   * Recebe: id_pessoa
   * Retorna: "ok" se remover, string mostrando o erro caso contrário
 
+= pedidos/novo_pedido.php = 
+
+  * Recebe: item_id, quantidade, pessoas (Pessoas tem que ser um array de ID de pessoas. Pra passar um array, é só colocar vários parametros assim pessoa[])
+  * Retorna: JSON do pedido ou JSON de erro
+
 <font color="#FF0000">
 = DAQUI PRA FRENTE AINDA NÃO É A VERSÃO NOVA = 
 
@@ -54,9 +59,4 @@
 
   * Recebe: pedido_id
   * Retorna: string "ok" se tiver sucesso, string mostrando o erro caso contrário
-
-= pedidos/novo_pedido.php = 
-
-  * Recebe: item_id, quantidade, tablet_id
-  * Retorna: JSON do pedido ou JSON de erro
 </font>
