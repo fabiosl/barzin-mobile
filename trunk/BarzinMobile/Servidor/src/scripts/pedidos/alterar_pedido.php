@@ -5,8 +5,7 @@ include_once '../../classes/pedido.php';
 $banco = new DAO();
 
 $pedido_id = $_REQUEST["pedido_id"];
-$quantidade = $_REQUEST["quantidade"];
-$estado = $_REQUEST["estado"];
+$pessoas = $_REQUEST["pessoas"];
 
 $pedido = $banco->recupera_pedido($pedido_id);
 if (get_class((Object) $pedido) != "Pedido") {
@@ -15,8 +14,8 @@ if (get_class((Object) $pedido) != "Pedido") {
 }
 
 $pedido->set_quantidade($quantidade);
-$pedido->set_estado($estado);
 $pedido->set_data_hora(time());
+$pedido->set_pessoas($pessoas);
 
 $bar = $banco->recupera_bar_pelo_item($pedido->get_item_id());
 if (get_class((Object) $bar) != "Bar") {

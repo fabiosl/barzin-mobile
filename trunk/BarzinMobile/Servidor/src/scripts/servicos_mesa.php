@@ -5,8 +5,8 @@ $banco = new DAO();
 
 $operacao = $_REQUEST["operacao"];
 
-// Excluir conta. o Excluir mesa tá lá embaixo
-if ($operacao == "excluir") {
+// Fechar conta
+if ($operacao == "fechar") {
 	$conta = $banco->recupera_conta_aberta($_REQUEST["id"]);
 	$mesa_id = $conta->get_mesa_id();
 
@@ -14,25 +14,31 @@ if ($operacao == "excluir") {
 	foreach ($conta->get_pedidos() as $pedido) {
 		if ($pedido->get_estado() == 'Atendido') {
 			$teve_pedido = true;
+			break;
 		}
 	}
 	
-	foreach ($banco->recupera_pedidos_pendentes_da_mesa($mesa_id) as $pedido) {
-		$excluir = $banco->excluir_pedido($pedido->get_id());
-		if ($excluir != "ok") {
-			echo $excluir;
-			exit;
-		}
-	}
-
 	if ($teve_pedido) {
-		$conta->set_estado('Fechada');
-		$conta->set_data_hora_fechamento(time());
-		echo $banco->salvar_conta($conta);
+		echo $banco->fechar_conta($mesa_id);
 		exit;
 	}
 	else {
-		echo $banco->excluir_conta($conta);
+		$resposta = $banco->excluir_conta($conta);
+		if ($resposta != "ok") {
+			echo $resposta;
+			exit;
+		}
+		
+		$banco->atualiza_codigo_mesa($mesa_id);
+		
+		$resposta =  $banco->excluir_pessoas_da_mesa($mesa_id);
+		if ($resposta != "ok") {
+			echo $resposta;
+			exit;
+		}
+		
+		$bar = $banco->recupera_bar_pela_mesa($mesa_id);
+		echo $banco->setar_precisa_atualizar_pedidos($bar->get_id());
 		exit;
 	}
 }

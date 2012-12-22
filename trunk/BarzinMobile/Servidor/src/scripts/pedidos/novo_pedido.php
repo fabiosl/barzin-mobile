@@ -6,9 +6,18 @@ $banco = new DAO();
 
 $item_id = $_REQUEST["item_id"];
 $quantidade = $_REQUEST["quantidade"];
-$tablet_id = $_REQUEST["tablet_id"];
+$pessoas = $_REQUEST["pessoas"];
+$comentario = $_REQUEST["comentario"];
 
-$pedido = new Pedido($item_id, $quantidade);
+$pedido = new Pedido($item_id, $quantidade, $pessoas, $comentario);
+
+$conta = $banco->recupera_conta_pela_pessoa($pessoas[0]);
+if (get_class($conta) == "Erro") {
+	echo $conta->get_json();
+	exit;
+}
+
+$pedido->set_conta_id($conta->get_id());
 
 $bar = $banco->recupera_bar_pelo_item($pedido->get_item_id());
 if (get_class((Object) $bar) != "Bar") {
@@ -22,5 +31,6 @@ if ($resposta != "ok") {
 	exit;
 }
 
-echo $banco->salvar_pedido($pedido, $tablet_id);
+
+echo $banco->salvar_pedido($pedido);
 ?>

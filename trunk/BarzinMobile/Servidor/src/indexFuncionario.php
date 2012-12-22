@@ -21,6 +21,14 @@ $ultima_atualizacao = $banco->recupera_ultima_atualizacao_pedidos($bar->get_id()
 
 echo "
 	<script type=\"text/javascript\">
+		var inicio_javascript = Math.round((new Date()).getTime() / 1000);	
+	
+		function atualizarTudo() {
+			fazerARequisicao();
+			reconstruirBlocos();
+		}
+		window.setInterval(\"atualizarTudo()\", 10000);
+
 		function fazerARequisicao() {
 			xmlhttp.open(\"GET\", \"scripts/pedidos/ultima_atualizacao_pedidos.php?bar_id=".$bar->get_id()."&dummy=\" + new Date().getTime(), true);
 			xmlhttp.onreadystatechange = function () {
@@ -28,15 +36,102 @@ echo "
 					if (xmlhttp.responseText != \"".$ultima_atualizacao."\") {
 						window.location.reload();
 					}
-					else {
-						alert(\"Sua operação não foi completada por causa do seguinte erro no banco de dados:\\n\\n\" + resposta);
-					}
 				}
 			};
 			xmlhttp.send(null);
 			return false;
 		}
-		window.setInterval(\"fazerARequisicao()\", 10000);
+		
+		function reconstruirBlocos() {
+			$('.bloco').each(function() {
+				var diferenca_servidor = ".time()." - $(this).children('.data_hora').text();
+				var diferenca_javascript = Math.round((new Date()).getTime() / 1000) - inicio_javascript;
+				var diferenca_em_segundos = diferenca_servidor + diferenca_javascript;
+				
+				var tempo_total = 30 * 60; // 30 minutos
+				
+				var verde = 0;
+				var vermelho = 0;
+				var azul = 0;
+				if (diferenca_em_segundos <= tempo_total / 2) {
+					// começa com verde claro (rgb(162, 255, 164))
+					// vai variando até laranja +- claro (rgb(255, 180, 73))
+					vermelho = 162 + Math.round((93 * diferenca_em_segundos) / (tempo_total / 2));
+					if (vermelho > 255) {
+						vermelho = 255;
+					}
+					verde = 255 - Math.round((75 * diferenca_em_segundos) / (tempo_total / 2));
+					azul = 164 - Math.round((91 * diferenca_em_segundos) / (tempo_total / 2));
+				}
+				else {
+					// começa com laranja +- claro (rgb(255, 180, 73))
+					// vai variando até vermelho (rgb(255, 0, 0))
+					vermelho = 255;
+					verde = Math.round((180 * (tempo_total - diferenca_em_segundos)) / (tempo_total / 2));
+					if (verde < 0) {
+						verde = 0;
+					}
+					azul = Math.round((73 * (tempo_total - diferenca_em_segundos)) / (tempo_total / 2));
+					if (azul < 0) {
+						azul = 0;
+					}
+				}
+				
+				var nova_cor = colorToHex('rgb(' + vermelho + ', ' + verde + ', ' + azul + ')');
+				
+				$(this).attr('bgcolor', nova_cor);
+				$(this).children('.quanto_tempo').html('<b>Há ' + quanto_tempo(diferenca_em_segundos) + '</b>');
+			});
+		}
+		
+		function quanto_tempo(segundos) {
+			var minutos = Math.floor(segundos / 60);
+   			var segundos = segundos % 60;
+			var horas = Math.floor(minutos / 60);
+			var minutos = minutos % 60;
+			var retorno = \"\";
+			var separador = \"\";
+			if (horas > 0) {
+				retorno = separador + horas + \" h\";
+				separador = \", \";
+			}
+			if (minutos > 0) {
+				retorno = retorno + separador + minutos + \" min\";
+				separador = \", \";
+			}
+			if (segundos > 0) {
+				retorno = retorno + separador + segundos + \" seg\";
+			}
+			return retorno;
+		}
+		
+		function colorToHex(color) {
+		    if (color.substr(0, 1) === '#') {
+		        return color;
+		    }
+		    var digits = /(.*?)rgb\((\d+), (\d+), (\d+)\)/.exec(color);
+		    
+		    var red = parseInt(digits[2]);
+		    var green = parseInt(digits[3]);
+		    var blue = parseInt(digits[4]);
+		    
+		    var rgb = blue | (green << 8) | (red << 16);
+		    return digits[1] + '#' + rgb.toString(16);
+		};
+		
+		$(function() {
+			$('.marcar_atendido').click(function() {
+				$.post(
+					'scripts/pedidos/atender_pedido.php', 
+					{pedido_id: $(this).children('div').text()},
+					function() {
+						window.location.reload();
+					} 
+				);
+			});
+			
+			reconstruirBlocos();
+		});
 	</script>
 ";
 
@@ -55,13 +150,22 @@ else {
 		}
 		$contador++;
 		$item = $banco->recupera_item($pedido->get_item_id());
-		$tablet = $banco->recupera_tablet_pela_conta($pedido->get_conta_id());
+		$mesa = $banco->recupera_mesa_pela_conta($pedido->get_conta_id());
 		echo "
-		 <td bgcolor=\"".$pedido->cor_fundo()."\" width=\"33%\" align=\"center\">
-		 <b><font size=\"+2\">$tablet</font></b><br/>
-		 Item: <b>".$item->get_nome()."</b><br/>
-		 Quantidade: <b>".$pedido->get_quantidade()."</b><br/>
-		 <b>Há ".$pedido->ha_quanto_tempo_foi_feito()."</b>
+		 <td width=\"33%\" align=\"center\" valign=\"middle\" class=\"bloco\">
+			 <b><font size=\"+2\">$mesa</font></b><br/>
+			 Item: <b>".$item->get_nome()."</b><br/>
+			 Quantidade: <b>".$pedido->get_quantidade()."</b><br/>
+			 <span class=\"quanto_tempo\"></span><br/>
+		";
+		if ($pedido->get_comentario() != "") {
+			echo "Comentário: <b>".$pedido->get_comentario()."</b><br/>";
+		}
+		echo "
+			 <div style=\"display: none;\" class=\"data_hora\">".$pedido->get_data_hora()."</div>
+			 <button type=\"button\" class=\"marcar_atendido\">Marcar atendido<div style=\"display: none\">".$pedido->get_id()."</div></button>
+			 <span class='joao'></span>
+		 </td>
 		";
 		if ($contador == 3) {
 			echo "</tr>";

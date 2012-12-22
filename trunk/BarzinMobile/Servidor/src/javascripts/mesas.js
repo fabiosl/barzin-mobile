@@ -14,11 +14,12 @@ function prepararFecharMesa(idMesa, nomeMesa, numeroPendentes) {
 }
 
 function fecharMesa(idMesa) {
-	xmlhttp.open("GET", "../scripts/servicos_mesa.php?operacao=excluir&id=" + idMesa, true);
+	var url = "../scripts/servicos_mesa.php?operacao=fechar&id=" + idMesa;
+	xmlhttp.open("GET", url, true);
 	xmlhttp.onreadystatechange = function () {
 		if (xmlhttp.readyState == 4 & xmlhttp.status == 200) {
 			if (xmlhttp.responseText == "ok") {
-				location.href = '../mesas/mesa.php?id=' + idMesa + '&msg=Mesa fechada com sucesso';
+				location.href = '../mesas/detalhes.php?id=' + idMesa + '&msg=Mesa fechada com sucesso';
 			}
 			else {
 				alert("Sua operação não foi completada por causa do seguinte erro no banco de dados:\n\n" + xmlhttp.responseText);
