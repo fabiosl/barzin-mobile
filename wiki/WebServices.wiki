@@ -46,12 +46,3 @@
 = pessoas/remover_pessoa.php = 
   * Recebe: id_pessoa
   * Retorna: "ok" se remover, string mostrando o erro caso contrário
-
-<font color="#FF0000">
-= DAQUI PRA FRENTE AINDA NÃO É A VERSÃO NOVA = 
-
-= pedidos/excluir_pedido.php = 
-
-  * Recebe: pedido_id
-  * Retorna: string "ok" se tiver sucesso, string mostrando o erro caso contrário
-</font>
