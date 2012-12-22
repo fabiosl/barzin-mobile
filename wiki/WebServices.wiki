@@ -27,12 +27,12 @@
 
 = pedidos/alterar_pedido.php = 
 
-  * Recebe: pedido_id, quantidade, pessoas (Pessoas tem que ser um array de ID de pessoas. Pra passar um array, é só colocar vários parametros com o mesmo nome, assim: pessoas`[]`)
+  * Recebe: pedido_id, quantidade, comentario, pessoas`[]` (Pessoas tem que ser um array de ID de pessoas. Pra passar um array, é só colocar vários parametros com o mesmo nome, assim: pessoas`[]`)
   * Retorna: JSON do pedido ou JSON de erro
 
 = pedidos/novo_pedido.php = 
 
-  * Recebe: item_id, quantidade, pessoas (Pessoas tem que ser um array de ID de pessoas. Pra passar um array, é só colocar vários parametros com o mesmo nome, assim: pessoas`[]`)
+  * Recebe: item_id, quantidade, comentario, pessoas`[]` (Pessoas tem que ser um array de ID de pessoas. Pra passar um array, é só colocar vários parametros com o mesmo nome, assim: pessoas`[]`)
   * Retorna: JSON do pedido ou JSON de erro
 
 = pessoas/adicionar_pessoa.php = 
