@@ -12,7 +12,7 @@ if (get_class((Object) $pedido) != "Pedido") {
 	exit;
 }
 
-$pedido->set_estado('Atendido');
+$pedido->set_estado("Atendido");
 
 $bar = $banco->recupera_bar_pelo_item($pedido->get_item_id());
 if (get_class((Object) $bar) != "Bar") {

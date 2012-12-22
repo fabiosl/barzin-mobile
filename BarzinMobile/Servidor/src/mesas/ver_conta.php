@@ -12,7 +12,7 @@ $design = new Design("..");
 $design->imprimir_topo();
 
 $conta = $banco->recupera_conta($_REQUEST["id"]);
-$mesa = $banco->recupera_tablet($conta->get_tablet_id());
+$mesa = $banco->recupera_mesa($conta->get_mesa_id());
 ?>
 
 <script type="text/javascript" src="../javascripts/funcoes.js" charset="utf-8"></script>
@@ -43,7 +43,7 @@ if (isset($_REQUEST["msg"])) {
 }
 
 echo "
- > <a href=\"mesa.php?id=".$mesa->get_id()."\">".$mesa->get_nome()."</a><br/>
+ > <a href=\"detalhes.php?id=".$mesa->get_id()."\">".$mesa->get_nome()."</a><br/>
  <div class=\"titulo1\">Conta</div><br/><br/>
  Aberta em: ".$conta->get_data_hora_abertura_formatado()."<br/>
  Fechada em: ".$conta->get_data_hora_fechamento_formatado()."
@@ -91,7 +91,7 @@ echo "
  </table>
 ";
 
-$pedidos_pendentes = $banco->recupera_pedidos_pendentes_do_tablet($mesa->get_id());
+$pedidos_pendentes = $banco->recupera_pedidos_pendentes_da_mesa($mesa->get_id());
 if (count($pedidos_pendentes) > 0) {
 	echo "
 	 <p />

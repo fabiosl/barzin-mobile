@@ -21,6 +21,7 @@ class Design {
 		 <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">
 		 <title>Barzin - Interação em Bares e Restaurantes!</title>
 		 <link rel=\"stylesheet\" href=\"".$this->raiz."/css/estilo.css\" type=\"text/css\">
+ 		 <script type=\"text/javascript\" src=\"".$this->raiz."/javascripts/jquery-1.8.3.min.js\" charset=\"utf-8\"></script>
 		 <script type=\"text/javascript\" src=\"".$this->raiz."/javascripts/funcoes.js\" charset=\"utf-8\"></script>
 		 <script type=\"text/javascript\">
 

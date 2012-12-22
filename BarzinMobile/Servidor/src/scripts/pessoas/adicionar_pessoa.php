@@ -10,6 +10,7 @@ $codigo_mesa = $_REQUEST["codigo_mesa"];
 $mesa = $banco->recupera_mesa_pelo_codigo($codigo_mesa);
 if (get_class($mesa) == "Erro") {
 	echo $mesa->get_json();
+	exit;
 }
 
 $pessoa = new Pessoa($nome_pessoa, $mesa->get_id());

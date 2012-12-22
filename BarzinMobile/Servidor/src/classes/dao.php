@@ -12,6 +12,8 @@ include_once 'pessoa.php';
 class DAO {
 
     function DAO() {
+    	date_default_timezone_set ('America/Recife');
+    	
 		$host = "localhost";
 		$usuario = "barzin";
 		$senha = "123456";
@@ -33,6 +35,29 @@ class DAO {
     	}
    		return "ok";
     }
+    
+    function atualiza_codigo_mesa($id_mesa) {
+    	$salvar = mysql_query("UPDATE mesas 
+    							SET codigo = '".$this->gerar_codigo_mesa()."'
+    							WHERE id = $id_mesa");
+    	if (!$salvar) {
+    		return mysql_error();
+    	}
+    	return "ok";
+    }
+    
+    function atualiza_pessoas_pedido($pedido) {
+    	$id_pedido = mysql_real_escape_string($pedido->get_id());
+    	$remover_pessoas = mysql_query("DELETE FROM pedidos_pessoas 
+    										WHERE pedido_id = $id_pedido");
+    	foreach ($pedido->get_pessoas() as $id_pessoa) {
+    		$inserir = mysql_query("INSERT INTO pedidos_pessoas (pedido_id, pessoa_id) VALUES(
+    									$id_pedido, 
+    									$id_pessoa)");
+    	}
+    }
+    
+    
     
     function consulta_codigo_valido($codigo_mesa) {
     	$codigo_mesa = mysql_real_escape_string($codigo_mesa);
@@ -213,6 +238,47 @@ class DAO {
     		return mysql_error();
     	}
     	return "ok";
+    }
+    
+    function excluir_pessoas_da_mesa($id_mesa) {
+    	$id_mesa = mysql_real_escape_string($id_mesa);
+    	
+    	$excluir = mysql_query("DELETE FROM pessoas 
+    								WHERE mesa_id = $id_mesa");
+    	if (!$excluir) {
+    		return mysql_error();
+    	}
+    	return "ok";
+    }
+    
+    function fechar_conta($id_mesa) {
+    	$id_mesa = mysql_real_escape_string($id_mesa);
+    	
+    	$remover_pessoas = mysql_query("DELETE FROM pessoas
+    										WHERE mesa_id = $id_mesa");
+    	if (!$remover_pessoas) {
+    		return mysql_error();
+    	}
+    	
+    	$remover_pedidos_pendentes = mysql_query("DELETE FROM p
+    												USING pedidos p, contas c, mesas m   
+    												WHERE p.conta_id = c.id 
+    													AND c.mesa_id = m.id 
+    													AND p.estado = 'Pendente'");
+    	if (!$remover_pedidos_pendentes) {
+    		return mysql_error();
+    	}
+    	
+    	$atualizar = mysql_query("UPDATE contas 
+    								SET estado = 'Fechada', 
+    									data_hora_fechamento = NOW() 
+    								WHERE estado = 'Aberta' 
+    									AND mesa_id = $id_mesa");
+    	if (!$atualizar) {
+    		return mysql_error();
+    	}
+    	
+    	return $this->atualiza_codigo_mesa($id_mesa);
     }
     
     function gerar_codigo_mesa() {
@@ -435,6 +501,20 @@ class DAO {
     	return null;
     }
     
+    function recupera_conta_pela_pessoa($id_pessoa) {
+    	$id_pessoa = mysql_real_escape_string($id_pessoa);
+    	$consulta = mysql_query("SELECT c.id
+            						FROM contas c, pessoas p  
+            						WHERE c.mesa_id = p.mesa_id 
+            							AND p.id = $id_pessoa 
+            							AND c.estado = 'Aberta'");
+    	if (mysql_num_rows($consulta) == 1) {
+    		list($id_conta) = mysql_fetch_array($consulta);
+    		return $this->recupera_conta($id_conta);
+    	}
+    	return new Erro("Não foi encontrada conta aberta para pessoa com ID $id_pessoa");
+    }
+    
     function recupera_contas_fechadas($id_mesa) {
     	$id_mesa = mysql_real_escape_string($id_mesa);
     	$consulta = mysql_query("SELECT c.id
@@ -489,7 +569,21 @@ class DAO {
     	return $nome;
     }
     
-    function recupera_mesa_pelo_codigo($codigo_mesa, $id_bar) {
+    function recupera_mesa_pelo_codigo($codigo_mesa) {
+    	$codigo_mesa = mysql_real_escape_string($codigo_mesa);
+    	 
+    	$consulta_mesa = mysql_query("SELECT m.id
+                    						FROM mesas m
+                    						WHERE m.codigo = '$codigo_mesa'");
+    	 
+    	if (mysql_num_rows($consulta_mesa) != 1) {
+    		return new Erro("Não foi encontrada mesa com o código $codigo_mesa");
+    	}
+    	list($id) = mysql_fetch_array($consulta_mesa);
+    	return $this->recupera_mesa($id);
+    }
+    
+    function recupera_mesa_pelo_codigo_e_bar($codigo_mesa, $id_bar) {
     	$codigo_mesa = mysql_real_escape_string($codigo_mesa);
     	$id_bar = mysql_real_escape_string($id_bar);
     	
@@ -520,7 +614,7 @@ class DAO {
     
     function recupera_pedido($id_pedido) {
     	$id_pedido = mysql_real_escape_string($id_pedido);
-    	$consulta_pedido = mysql_query("SELECT p.id, p.item_id, p.conta_id, p.quantidade, p.estado, UNIX_TIMESTAMP(p.data_hora) AS data_hora
+    	$consulta_pedido = mysql_query("SELECT p.id, p.item_id, p.conta_id, p.quantidade, p.estado, UNIX_TIMESTAMP(p.data_hora) AS data_hora, p.comentario
     										FROM pedidos p
     										WHERE p.id=$id_pedido");
     	if (mysql_num_rows($consulta_pedido)) {
@@ -769,7 +863,7 @@ class DAO {
 			$salvar = mysql_query("INSERT INTO mesas (bar_id, nome, codigo) VALUES (
 									$bar_id,
 									'$nome', 
-									".$this->gerar_codigo_mesa().")");
+									'".$this->gerar_codigo_mesa()."')");
 			}
 			$id_mesa = mysql_insert_id();
 			if (!$salvar) {
@@ -779,39 +873,36 @@ class DAO {
 			return "ok";
 	}
 	
-	function salvar_pedido($pedido, $mesa_id = null) {
+	function salvar_pedido($pedido) {
 		$id = mysql_real_escape_string($pedido->get_id());
 		$item_id = mysql_real_escape_string($pedido->get_item_id());
 		$conta_id = mysql_real_escape_string($pedido->get_conta_id());
 		$quantidade = mysql_real_escape_string($pedido->get_quantidade());
 		$data_hora = mysql_real_escape_string($pedido->get_data_hora_mysql());
 		$estado = mysql_real_escape_string($pedido->get_estado());
+		$comentario = mysql_real_escape_string($pedido->get_comentario());
 		$consulta = mysql_query("SELECT p.id
 	    							FROM pedidos p
-	    							WHERE p.id=$id");
+	    							WHERE p.id = $id");
 		if (mysql_num_rows($consulta) == 1) {
 			$salvar = mysql_query("UPDATE pedidos
-	    								SET	item_id=$item_id,
-	    									conta_id=$conta_id,
-	    									quantidade=$quantidade,
-	    									data_hora='$data_hora',
-	    									estado='$estado'
+	    								SET	item_id = $item_id,
+	    									conta_id = $conta_id,
+	    									quantidade = $quantidade,
+	    									data_hora = '$data_hora',
+	    									estado = '$estado', 
+	    									comentario = '$comentario'
 	    								WHERE id=$id");
-			$id_pedido_salvo = $id;
 		}
 		else {
-			if ($mesa_id == null) {
-				$erro = "Precisa informar mesa_id para essa operação";
-				return $erro->get_json();
-			}
-			
-			$salvar = mysql_query("INSERT INTO pedidos (item_id, conta_id, quantidade, estado, data_hora) VALUES (
+			$salvar = mysql_query("INSERT INTO pedidos (item_id, conta_id, quantidade, estado, data_hora, comentario) VALUES (
 									$item_id,
 									$conta_id,
 									$quantidade,
 									'$estado',
-									'$data_hora')");
-			$id_pedido_salvo = mysql_insert_id();
+									'$data_hora', 
+									'$comentario')");
+			$pedido->set_id(mysql_insert_id());
 		}
 		
 		if (!$salvar) {
@@ -819,7 +910,8 @@ class DAO {
 			return $erro->get_json();
 		}
 		
-		$pedido = $this->recupera_pedido($id_pedido_salvo);
+		$this->atualiza_pessoas_pedido($pedido);
+		
 		return $pedido->get_json();
 	}
 	
