@@ -5,9 +5,9 @@ include_once 'bean.php';
 class Pedido extends Bean {
 	
 	// $data_hora será um timestamp
-    protected $id, $item_id, $conta_id, $quantidade, $data_hora, $estado, $hora_formatado, $pessoas;
+    protected $id, $item_id, $conta_id, $quantidade, $data_hora, $estado, $hora_formatado, $pessoas, $data_hora_solicitacao_cancelamento;
     
-    public function Pedido($item_id = -1, $quantidade = 0, $pessoas = array(), $comentario = "", $estado = "Pendente", $id = -1, $conta_id = -1, $data_hora = 0) {
+    public function Pedido($item_id = -1, $quantidade = 0, $comentario = "", $pessoas = array(), $estado = "Pendente", $id = -1, $conta_id = -1, $data_hora = 0) {
     	$this->id = $id;
     	$this->item_id = $item_id;
     	$this->conta_id = $conta_id;
@@ -48,6 +48,14 @@ class Pedido extends Bean {
     	return date("Y-m-d H:i:s", $this->data_hora);
     }
     
+    public function get_data_hora_solicitacao_cancelamento() {
+    	return $this->data_hora_solicitacao_cancelamento;
+    }
+    
+    public function get_data_hora_solicitacao_cancelamento_mysql() {
+    	return date("Y-m-d H:i:s", $this->data_hora_solicitacao_cancelamento);
+    }
+    
     public function get_estado() {
     	return $this->estado;
     }
@@ -82,6 +90,10 @@ class Pedido extends Bean {
     
     public function set_data_hora($data_hora) {
     	$this->data_hora = $data_hora;
+    }
+    
+    public function set_data_hora_solicitacao_cancelamento($data_hora_solicitacao_cancelamento) {
+    	$this->data_hora_solicitacao_cancelamento = $data_hora_solicitacao_cancelamento;
     }
     
     public function set_estado($estado) {
