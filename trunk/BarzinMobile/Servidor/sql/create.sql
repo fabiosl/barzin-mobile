@@ -80,17 +80,17 @@ CREATE TABLE contas (
 );
 
 CREATE TABLE pedidos (
-    id          SERIAL				PRIMARY KEY,
-    item_id     BIGINT UNSIGNED 	NOT NULL,
-    conta_id    BIGINT UNSIGNED 	NOT NULL,
-    quantidade  INTEGER     		NOT NULL,
-    estado      TEXT        		NOT NULL,
-    data_hora   TIMESTAMP   		NOT NULL,
-    comentario	TEXT				NOT NULL,
+    id          						SERIAL				PRIMARY KEY,
+    item_id    				 			BIGINT UNSIGNED 	NOT NULL,
+    conta_id    						BIGINT UNSIGNED 	NOT NULL,
+    quantidade  						INTEGER     		NOT NULL,
+    estado      						TEXT        		NOT NULL,
+    data_hora   						TIMESTAMP   		NOT NULL,
+    comentario							TEXT				NOT NULL,
+    data_hora_solicitacao_cancelamento 	TIMESTAMP,
     
     CONSTRAINT pedido_item_fk FOREIGN KEY (item_id) REFERENCES itens(id),
-    CONSTRAINT pedido_conta_fk FOREIGN KEY (conta_id) REFERENCES contas(id) ON DELETE CASCADE,
-    CONSTRAINT estado_pedido_valido CHECK (estado IN ('EM_ANDAMENTO', 'CONCLUIDO', 'CANCELADO'))
+    CONSTRAINT pedido_conta_fk FOREIGN KEY (conta_id) REFERENCES contas(id) ON DELETE CASCADE
 );
 
 CREATE TABLE pessoas (

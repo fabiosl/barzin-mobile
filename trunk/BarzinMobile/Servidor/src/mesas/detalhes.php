@@ -8,16 +8,24 @@ $banco = new DAO();
 $design = new Design("..");
 $design->imprimir_topo();
 
+$login_usuario = $_SESSION["usuario_logado"];
+$tipo_usuario = $banco->get_tipo_usuario($login_usuario);
+
 $mesa = $banco->recupera_mesa($_REQUEST["id"]);
 
-$pode_alterar = true;
-if ($banco->consulta_ha_conta_aberta($mesa->get_id())) {
-	echo "
-	 <div class=\"warning\">
-		Há conta aberta nessa mesa no momento. Você só pode fazer alterações na mesa quando a conta for fechada.
-	 </div>
-	";
+if ($tipo_usuario != "admin") {
 	$pode_alterar = false;
+}
+else {
+	$pode_alterar = true;
+	if ($banco->consulta_ha_conta_aberta($mesa->get_id())) {
+		echo "
+		 <div class=\"warning\">
+			Há conta aberta nessa mesa no momento. Você só pode fazer alterações na mesa quando a conta for fechada.
+		 </div>
+		";
+		$pode_alterar = false;
+	}
 }
 ?>
 

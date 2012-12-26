@@ -9,6 +9,7 @@ $design = new Design("..");
 $design->imprimir_topo();
 
 $login_usuario = $_SESSION["usuario_logado"];
+$tipo_usuario = $banco->get_tipo_usuario($login_usuario);
 $bar = $banco->recupera_bar_pelo_login($login_usuario);
 ?>
 
@@ -33,26 +34,28 @@ if (isset($_REQUEST["msg"])) {
   ";
 }
 
-echo "
- <a href=\"javascript: void(0);\" id=\"link_nova_mesa\" onclick=\"prepararCriarMesa();\"><img src=\"".$design->get_endereco_imagem("mais.gif")."\" /> Nova mesa</a>
- <div id=\"nova_mesa\" style=\"display: none;\">
-	<table class=\"semBorda\">
-		<form id=\"form_nova_mesa\" action=\"\" onsubmit=\"return criarMesa();\">
-		<input type=\"hidden\" name=\"bar_id\" value=\"".$bar->get_id()."\" />
-		<tr>
- 			<td nowrap align=\"right\">Nova mesa*:</td>
-			<td><input type=\"text\" size=\"20\" name=\"nome\" class=\"Nome da mesa|Obrig\" /></td>
-		</tr>
-		<tr>
-			<td colspan=\"2\" align=\"center\"><button type=\"submit\">OK</button> <button type=\"button\" onclick=\"cancelarCriarMesa()\">Cancelar</button>
-		</tr>
-		</form>
-	</table>
-	<br/>
- </div>
- <div id=\"salvando_nova_mesa\" style=\"display: none;\">Salvando nova mesa...</div>
- <br/><br/>
-";
+if ($tipo_usuario == "admin") {
+	echo "
+	 <a href=\"javascript: void(0);\" id=\"link_nova_mesa\" onclick=\"prepararCriarMesa();\"><img src=\"".$design->get_endereco_imagem("mais.gif")."\" /> Nova mesa</a>
+	 <div id=\"nova_mesa\" style=\"display: none;\">
+		<table class=\"semBorda\">
+			<form id=\"form_nova_mesa\" action=\"\" onsubmit=\"return criarMesa();\">
+			<input type=\"hidden\" name=\"bar_id\" value=\"".$bar->get_id()."\" />
+			<tr>
+	 			<td nowrap align=\"right\">Nova mesa*:</td>
+				<td><input type=\"text\" size=\"20\" name=\"nome\" class=\"Nome da mesa|Obrig\" /></td>
+			</tr>
+			<tr>
+				<td colspan=\"2\" align=\"center\"><button type=\"submit\">OK</button> <button type=\"button\" onclick=\"cancelarCriarMesa()\">Cancelar</button>
+			</tr>
+			</form>
+		</table>
+		<br/>
+	 </div>
+	 <div id=\"salvando_nova_mesa\" style=\"display: none;\">Salvando nova mesa...</div>
+	 <br/><br/>
+	";
+}
 
 $mesas = $banco->recupera_mesas($bar->get_id());
 

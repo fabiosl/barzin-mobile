@@ -11,6 +11,9 @@ $banco = new DAO();
 $design = new Design("..");
 $design->imprimir_topo();
 
+$login_usuario = $_SESSION["usuario_logado"];
+$tipo_usuario = $banco->get_tipo_usuario($login_usuario);
+
 $conta = $banco->recupera_conta($_REQUEST["id"]);
 $mesa = $banco->recupera_mesa($conta->get_mesa_id());
 ?>
@@ -48,12 +51,13 @@ echo "
  Aberta em: ".$conta->get_data_hora_abertura_formatado()."<br/>
  Fechada em: ".$conta->get_data_hora_fechamento_formatado()."
  <p/>
- Pedidos atendidos:<br/>
+ Pedidos atendidos/cancelados:<br/>
  <table border=\"1\" cellpadding=\"5\">
  	<tr bgcolor=\"#f0f0f0\">
  		<th>Hora</th>
  		<th>Item</th>
  		<th>Quantidade</th>
+ 		<th>Estado</th>
  		<th>Preço Unidade</th>
  		<th>Preço</th>
  	</tr>
@@ -69,8 +73,18 @@ if (count($pedidos_atendidos) > 0) {
 		 	<td>".$pedido->get_hora()."</td>
 		 	<td>".$item->get_nome()."</td>
 		 	<td>".$pedido->get_quantidade()."</td>
+		 	<td>".$pedido->get_estado()."</td>
 		 	<td>".$item->get_preco_formatado()."</td>
-		 	<td>".sprintf("R$ %.2f", $item->get_preco() * $pedido->get_quantidade())."</td>
+		 	<td>
+		";
+		if ($pedido->get_estado() == "Atendido") {
+			echo sprintf("R$ %.2f", $item->get_preco() * $pedido->get_quantidade());
+		}
+		else {
+			echo "-";
+		}
+		echo "
+			</td>
 		 </tr>
 		";
 	}
@@ -78,14 +92,14 @@ if (count($pedidos_atendidos) > 0) {
 else {
 	echo "
 	 <tr align=\"center\">
-	 	<td colspan=\"5\">Ainda nenhum pedido foi atendido dessa conta</td>
+	 	<td colspan=\"6\">Ainda nenhum pedido foi atendido dessa conta</td>
 	 </tr>
 	";
 }
 
 echo "
 	<tr bgcolor=\"#f0f0f0\">
-		<th colspan=\"4\" align=\"right\">TOTAL</th>
+		<th colspan=\"5\" align=\"right\">TOTAL</th>
 		<th>".$conta->get_total_formatado()."</th>
 	</tr>
  </table>
@@ -109,7 +123,7 @@ if (count($pedidos_pendentes) > 0) {
 	}
 }
 
-if ($conta->get_estado() != "Fechada") {
+if ($conta->get_estado() != "Fechada" && $tipo_usuario == "admin") {
 	echo "
 	 <p align=\"center\" />
 	 <a id=\"link_fechar\" href=\"javascript: void(0);\" onclick=\"prepararFecharMesa(".$mesa->get_id().", '".$mesa->get_nome()."', ".count($pedidos_pendentes).");\">Fechar conta</a>

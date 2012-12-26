@@ -9,7 +9,18 @@ $quantidade = $_REQUEST["quantidade"];
 $pessoas = $_REQUEST["pessoas"];
 $comentario = $_REQUEST["comentario"];
 
-$pedido = new Pedido($item_id, $quantidade, $pessoas, $comentario);
+$pedido = new Pedido($item_id, $quantidade, $comentario);
+
+$pessoas_array = array();
+foreach ($pessoas as $id_pessoa) {
+	$pessoa = $banco->recupera_pessoa($id_pessoa);
+	if (get_class($pessoa) != "Pessoa") {
+		echo $pessoa->get_json();
+		exit;
+	}
+	$pessoas_array[] = $pessoa;
+}
+$pedido->set_pessoas($pessoas_array);
 
 $conta = $banco->recupera_conta_pela_pessoa($pessoas[0]);
 if (get_class($conta) == "Erro") {

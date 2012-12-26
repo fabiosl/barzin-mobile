@@ -50,10 +50,10 @@ class DAO {
     	$id_pedido = mysql_real_escape_string($pedido->get_id());
     	$remover_pessoas = mysql_query("DELETE FROM pedidos_pessoas 
     										WHERE pedido_id = $id_pedido");
-    	foreach ($pedido->get_pessoas() as $id_pessoa) {
+    	foreach ($pedido->get_pessoas() as $pessoa) {
     		$inserir = mysql_query("INSERT INTO pedidos_pessoas (pedido_id, pessoa_id) VALUES(
     									$id_pedido, 
-    									$id_pessoa)");
+    									".$pessoa->get_id().")");
     	}
     }
     
@@ -475,12 +475,14 @@ class DAO {
     		$consulta_pedidos = mysql_query("SELECT p.id
         											FROM pedidos p
         											WHERE p.conta_id=".$conta->get_id()."
-        												AND p.estado='Atendido'");
+        												AND p.estado != 'Pendente'");
     		$total = 0;
     		while (list($id_pedido) = mysql_fetch_array($consulta_pedidos)) {
     			$pedido = $this->recupera_pedido($id_pedido);
     			$conta->adicionar_pedido($pedido);
-    			$total += $this->recupera_total_pedido($id_pedido);
+    			if ($pedido->get_estado() == 'Atendido') {
+    				$total += $this->recupera_total_pedido($id_pedido);
+    			}
     		}
     		$conta->set_total($total);
     		return $conta;
@@ -614,16 +616,44 @@ class DAO {
     
     function recupera_pedido($id_pedido) {
     	$id_pedido = mysql_real_escape_string($id_pedido);
-    	$consulta_pedido = mysql_query("SELECT p.id, p.item_id, p.conta_id, p.quantidade, p.estado, UNIX_TIMESTAMP(p.data_hora) AS data_hora, p.comentario
+    	$consulta_pedido = mysql_query("SELECT p.id, p.item_id, p.conta_id, p.quantidade, p.estado, UNIX_TIMESTAMP(p.data_hora) AS data_hora, p.comentario, UNIX_TIMESTAMP(p.data_hora_solicitacao_cancelamento) AS data_hora_solicitacao_cancelamento
     										FROM pedidos p
     										WHERE p.id=$id_pedido");
     	if (mysql_num_rows($consulta_pedido)) {
     		$pedido = new Pedido();
     		$pedido->setar_atributos_consulta($consulta_pedido);
     		$pedido->set_hora_formatado();
+    		$consulta_pessoas = mysql_query("SELECT p.pessoa_id 
+    											FROM pedidos_pessoas p 
+    											WHERE p.pedido_id = $id_pedido");
+    		$pessoas = array();
+    		while (list($id_pessoa) = mysql_fetch_array($consulta_pessoas)) {
+    			$pessoa = $this->recupera_pessoa($id_pessoa);
+    			$pessoas[] = $pessoa;
+    		}
+    		$pedido->set_pessoas($pessoas);
     		return $pedido;
     	}
     	return new Erro("Não foi encontrado pedido com o ID $id_pedido");
+    }
+    
+    function recupera_pedidos_com_cancelamento_solicitado($id_bar) {
+    	$pedidos = array();
+    	$id_bar = mysql_real_escape_string($id_bar);
+    	$consulta_pedidos_pendentes = mysql_query("SELECT DISTINCT p.id
+        												FROM pedidos p, contas c, mesas m
+        												WHERE p.estado='Cancelamento Solicitado'
+        													AND p.conta_id=c.id
+        													AND c.mesa_id=m.id
+        													AND m.bar_id=$id_bar
+        												ORDER BY p.data_hora ASC");
+    	while (list($id_pedido) = mysql_fetch_array($consulta_pedidos_pendentes)) {
+    		$pedido = $this->recupera_pedido($id_pedido);
+    		if (get_class($pedido) == "Pedido") {
+    			$pedidos[] = $pedido;
+    		}
+    	}
+    	return $pedidos;
     }
     
     function recupera_pedidos_pendentes_do_bar($id_bar) {
@@ -655,6 +685,25 @@ class DAO {
         													AND c.mesa_id=$id_mesa
         												ORDER BY p.data_hora ASC");
     	while (list($id_pedido) = mysql_fetch_array($consulta_pedidos_pendentes)) {
+    		$pedido = $this->recupera_pedido($id_pedido);
+    		if (get_class($pedido) == "Pedido") {
+    			$pedidos[] = $pedido;
+    		}
+    	}
+    	return $pedidos;
+    }
+    
+    function recupera_pedidos_por_pessoa($id_pessoa) {
+    	$pedidos = array();
+    	$id_pessoa = mysql_real_escape_string($id_pessoa);
+    	$consulta_pedidos = mysql_query("SELECT DISTINCT pp.pedido_id
+            								FROM pedidos_pessoas pp, pedidos p, itens i   
+            								WHERE pp.pessoa_id = $id_pessoa
+            									AND pp.pedido_id = p.id 
+            									AND p.estado = 'Atendido'
+            									AND p.item_id = i.id 
+            								ORDER BY i.nome ASC");
+    	while (list($id_pedido) = mysql_fetch_array($consulta_pedidos)) {
     		$pedido = $this->recupera_pedido($id_pedido);
     		if (get_class($pedido) == "Pedido") {
     			$pedidos[] = $pedido;
@@ -881,6 +930,7 @@ class DAO {
 		$data_hora = mysql_real_escape_string($pedido->get_data_hora_mysql());
 		$estado = mysql_real_escape_string($pedido->get_estado());
 		$comentario = mysql_real_escape_string($pedido->get_comentario());
+		$data_hora_solicitacao_cancelamento = mysql_real_escape_string($pedido->get_data_hora_solicitacao_cancelamento_mysql());
 		$consulta = mysql_query("SELECT p.id
 	    							FROM pedidos p
 	    							WHERE p.id = $id");
@@ -891,17 +941,19 @@ class DAO {
 	    									quantidade = $quantidade,
 	    									data_hora = '$data_hora',
 	    									estado = '$estado', 
-	    									comentario = '$comentario'
+	    									comentario = '$comentario',
+	    									data_hora_solicitacao_cancelamento = '$data_hora_solicitacao_cancelamento'
 	    								WHERE id=$id");
 		}
 		else {
-			$salvar = mysql_query("INSERT INTO pedidos (item_id, conta_id, quantidade, estado, data_hora, comentario) VALUES (
+			$salvar = mysql_query("INSERT INTO pedidos (item_id, conta_id, quantidade, estado, data_hora, comentario, data_hora_solicitacao_cancelamento) VALUES (
 									$item_id,
 									$conta_id,
 									$quantidade,
 									'$estado',
 									'$data_hora', 
-									'$comentario')");
+									'$comentario', 
+									'$data_hora_solicitacao_cancelamento')");
 			$pedido->set_id(mysql_insert_id());
 		}
 		

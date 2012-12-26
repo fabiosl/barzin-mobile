@@ -94,6 +94,7 @@ class Design {
 	
 	public function imprimir_menu_funcionario() {
 		echo "
+		 <a href=\"".$this->raiz."/mesas/index.php\"><img src=\"".$this->raiz."/img/mesa.png\" onMouseOver=\"menu('Controle de Mesas')\" onMouseOut=\"menu('')\" /></a><br/><br/>
 		 <a href=\"".$this->raiz."/ajudaFuncionario.php\"><img src=\"".$this->raiz."/img/ajuda.png\" onMouseOver=\"menu('Ajuda')\" onMouseOut=\"menu('')\" /></a><br/>
 		";
 	}
