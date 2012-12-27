@@ -24,6 +24,10 @@
   * Recebe: pessoas`[]` (ids das pessoas)
   * Retorna: JSON contendo o "total", os pedidos daquela pessoa (com a quantidade dela e a parcela)
 
+= garcom/chamar_garcom.php =
+  * Recebe: codigo_mesa
+  * JSON do chamado, ou JSON de erro
+
 = mesas/conectar_a_mesa.php =
 
   * Recebe: codigo_mesa, id_bar
