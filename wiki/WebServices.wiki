@@ -20,6 +20,10 @@
   * Recebe: id_item
   * Retorna: Imagem do thumb do item
 
+= contas/conta_por_pessoas.php = 
+  * Recebe: pessoas`[]` (ids das pessoas)
+  * Retorna: JSON contendo o "total", os pedidos daquela pessoa (com a quantidade dela e a parcela)
+
 = mesas/conectar_a_mesa.php =
 
   * Recebe: codigo_mesa, id_bar
