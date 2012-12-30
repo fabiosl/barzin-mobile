@@ -1,3 +1,5 @@
+DROP TABLE chamados_garcom;
+
 DROP TABLE pedidos_pessoas;
 
 DROP TABLE pessoas;

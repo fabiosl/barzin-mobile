@@ -110,3 +110,10 @@ CREATE TABLE pedidos_pessoas (
 	CONSTRAINT pessoa_pedidos_pessoas_fk FOREIGN KEY (pessoa_id) REFERENCES pessoas(id) ON DELETE CASCADE
 );
 
+CREATE TABLE chamados_garcom (
+	id 			SERIAL 				PRIMARY KEY, 
+	mesa_id 	BIGINT UNSIGNED 	NOT NULL, 
+	data_hora 	TIMESTAMP, 
+	
+	CONSTRAINT mesa_chamados_fk FOREIGN KEY (mesa_id) REFERENCES mesas(id) ON DELETE CASCADE
+);

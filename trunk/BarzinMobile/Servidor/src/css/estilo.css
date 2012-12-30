@@ -160,6 +160,11 @@ tr.semBorda, td.semBorda, th.semBorda {
 	color: #000;
 }
 
+.link_menu {
+	margin-bottom: 12px;
+	display: block;
+}
+
 /*\*/
 * html .principal {
     w\idth: 794px; /* for IE6 in standards mode */

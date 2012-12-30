@@ -9,6 +9,15 @@ $design->imprimir_topo();
 <table class="semborda">
 	<tr valign="top">
 		<td style="padding: 20px; text-align: justify;">
+			<?php 
+			if (isset($_REQUEST["msg"])) {
+				echo "
+				 <div class=\"msg\">
+				 	".$_REQUEST["msg"]."
+	 			 </div>
+				";
+			}
+			?>
 			<h1>Barzin - Sistema de Interação em Bares e Restaurantes</h1>
 			A ideia do Barzin é promover a interação, em um ambiente de bar ou restaurante, entre clientes e entre os clientes e o estabelecimento. A interação é feita através de dispositivos (tablets) acoplados às mesas. 
 			<p/>

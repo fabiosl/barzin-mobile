@@ -8,6 +8,7 @@ include_once 'pedido.php';
 include_once 'erro.php';
 include_once 'mesa.php';
 include_once 'pessoa.php';
+include_once 'chamado_garcom.php';
 
 class DAO {
 
@@ -57,7 +58,30 @@ class DAO {
     	}
     }
     
-    
+    function cadastrar_bar($bar, $admin_senha, $func_senha) {
+    	$admin_login = mysql_real_escape_string($bar->get_admin_login());
+    	$admin_senha = mysql_real_escape_string($admin_senha);
+    	$func_login = mysql_real_escape_string($bar->get_func_login());
+    	$func_senha = mysql_real_escape_string($func_senha);
+    	
+    	$inserir_admin = mysql_query("INSERT INTO usuarios (login, senha) VALUES (
+    									'$admin_login', 
+    									MD5('$admin_senha'))");
+    	if (!$inserir_admin) {
+    		$erro = new Erro(mysql_error());
+    		return $erro->get_json();
+    	}
+    	
+    	$inserir_func = mysql_query("INSERT INTO usuarios (login, senha) VALUES (
+    	    									'$func_login', 
+    	    									MD5('$func_senha'))");
+    	if (!$inserir_func) {
+    		$erro = new Erro(mysql_error());
+    		return $erro->get_json();
+    	}
+    	
+    	return $this->salvar_bar($bar);
+    }
     
     function consulta_codigo_valido($codigo_mesa) {
     	$codigo_mesa = mysql_real_escape_string($codigo_mesa);
@@ -65,6 +89,40 @@ class DAO {
             						FROM mesas m
             						WHERE m.codigo = '$codigo_mesa'");
     	return mysql_num_rows($consulta) == 1;
+    }
+    
+    function consulta_existe_email($email) {
+    	$email = mysql_real_escape_string($email);
+    	$consulta = mysql_query("SELECT *
+                        				FROM bares b 
+                        				WHERE b.email = '$email'");
+    	return mysql_num_rows($consulta) > 0;
+    }
+    
+    function consulta_existe_email_em_outro_bar($email, $id_bar) {
+    	$email = mysql_real_escape_string($email);
+    	$id_bar = mysql_real_escape_string($id_bar);
+    	$consulta = mysql_query("SELECT *
+                        			FROM bares b 
+                        			WHERE b.email = '$email' 
+    									AND b.id != $id_bar");
+    	return mysql_num_rows($consulta) > 0;
+    }
+    
+    function consulta_existe_usuario($usuario) {
+    	$usuario = mysql_real_escape_string($usuario);
+    	$consulta = mysql_query("SELECT *
+                						FROM usuarios u
+                						WHERE u.login = '$usuario'");
+    	return mysql_num_rows($consulta) > 0;
+    }
+    
+    function consulta_ha_chamado_garcom_pra_mesa($id_mesa) {
+    	$id_mesa = mysql_real_escape_string($id_mesa);
+    	$consulta = mysql_query("SELECT *
+            						FROM chamados_garcom c
+            						WHERE c.mesa_id = $id_mesa");
+    	return mysql_num_rows($consulta) > 0;
     }
     
     function consulta_ha_conta_aberta($id_mesa) {
@@ -147,6 +205,16 @@ class DAO {
     		return mysql_error();
     	}
     	return $this->incrementar_versao_cardapio($id_bar);
+    }
+    
+    function excluir_chamado_garcom($id_chamado) {
+    	$id_chamado = mysql_real_escape_string($id_chamado);
+    	$excluir = mysql_query("DELETE FROM chamados_garcom
+        	    					WHERE id = $id_chamado");
+    	if (!$excluir) {
+    		return mysql_error();
+    	}
+    	return "ok";
     }
     
     function excluir_conta($conta) {
@@ -339,8 +407,8 @@ class DAO {
     function recupera_bar($id_bar) {
     	$id_bar = mysql_real_escape_string($id_bar);
     	$consulta_bar = mysql_query("SELECT b.*
-        									FROM bares b
-        	        						WHERE b.id=$id_bar");
+        								FROM bares b
+        	        					WHERE b.id=$id_bar");
     	if (mysql_num_rows($consulta_bar)) {
     		$bar = new Bar();
     		$bar->setar_atributos_consulta($consulta_bar);
@@ -462,6 +530,33 @@ class DAO {
     		return $categoria;
     	}
     	return null;
+    }
+    
+    function recupera_chamado_garcom($id_chamado) {
+    	$id_chamado = mysql_real_escape_string($id_chamado);
+    	$consulta_chamado = mysql_query("SELECT c.id, c.mesa_id, UNIX_TIMESTAMP(c.data_hora) AS data_hora 
+        									FROM chamados_garcom c
+        									WHERE c.id = $id_chamado");
+    	if (mysql_num_rows($consulta_chamado)) {
+    		$chamado = new Chamado_Garcom();
+    		$chamado->setar_atributos_consulta($consulta_chamado);
+    		return $chamado;
+    	}
+    	return new Erro("Não foi encontrado chamado ao garçom com o ID $id_chamado");
+    }
+    
+	function recupera_chamados_garcom($id_bar) {
+    	$id_bar = mysql_real_escape_string($id_bar);
+    	$consulta = mysql_query("SELECT c.id
+        							FROM chamados_garcom c, mesas m
+        							WHERE c.mesa_id = m.id 
+        								AND m.bar_id = $id_bar
+        							ORDER BY c.data_hora ASC");
+    	$lista_chamados = array();
+    	while (list($id_chamado) = mysql_fetch_array($consulta)) {
+    		$lista_chamados[] = $this->recupera_chamado_garcom($id_chamado);
+    	}
+    	return $lista_chamados;
     }
     
     function recupera_conta($id_conta) {
@@ -759,6 +854,66 @@ class DAO {
     	return $timestamp;
     }
     
+    function salvar_bar($bar) {
+    	$id_bar = mysql_real_escape_string($bar->get_id());
+    	$nome = mysql_real_escape_string($bar->get_nome());
+    	$rua = mysql_real_escape_string($bar->get_rua());
+    	$numero = mysql_real_escape_string($bar->get_numero());
+    	$complemento = mysql_real_escape_string($bar->get_complemento());
+    	$bairro = mysql_real_escape_string($bar->get_bairro());
+    	$cidade = mysql_real_escape_string($bar->get_cidade());
+    	$estado = mysql_real_escape_string($bar->get_estado());
+    	$cep = mysql_real_escape_string($bar->get_cep());
+    	$telefone1 = mysql_real_escape_string($bar->get_telefone1());
+    	$telefone2 = mysql_real_escape_string($bar->get_telefone2());
+    	$email = mysql_real_escape_string($bar->get_email());
+    	$admin_login = mysql_real_escape_string($bar->get_admin_login());
+    	$func_login = mysql_real_escape_string($bar->get_func_login());
+    	$consulta = mysql_query("SELECT * 
+    								FROM bares b 
+    								WHERE b.id = $id_bar");
+    	if (mysql_num_rows($consulta) == 1) {
+    		$salvar = mysql_query("UPDATE bares 
+    								SET nome = '$nome', 
+    									rua = '$rua', 
+    									numero = '$numero',  
+    									complemento = '$complemento', 
+    									bairro = '$bairro', 
+    									cidade = '$cidade', 
+    									estado = '$estado', 
+    									cep = '$cep', 
+    									telefone1 = '$telefone1', 
+    									telefone2 = '$telefone2', 
+    									email = '$email', 
+    									admin_login = '$admin_login', 
+    									func_login = '$func_login'
+    								WHERE id = $id_bar");
+    	}
+    	else {
+    		$salvar = mysql_query("INSERT INTO bares (nome, rua, numero, complemento, bairro, cidade, estado, cep, telefone1, telefone2, email, admin_login, func_login) VALUES (
+    								'$nome', 
+    								'$rua', 
+    								'$numero', 
+    								'$complemento', 
+    								'$bairro', 
+    								'$cidade', 
+    								'$estado', 
+    								'$cep', 
+    								'$telefone1',
+    								'$telefone2',
+    								'$email', 
+    								'$admin_login', 
+    								'$func_login')");
+    		$bar->set_id(mysql_insert_id());
+    	}
+    	
+    	if (!$salvar) {
+    		$erro = new Erro(mysql_error());
+    		return $erro->get_json();
+    	}
+    	return $bar->get_json();
+    }
+    
     function salvar_categoria($categoria) {
     	$id_categoria = mysql_real_escape_string($categoria->get_id());
     	$nome_categoria = mysql_real_escape_string($categoria->get_nome());
@@ -795,6 +950,34 @@ class DAO {
     	list($id_bar) = mysql_fetch_array($consulta_bar);
     	
     	return $this->incrementar_versao_cardapio($id_bar);
+    }
+    
+    function salvar_chamado_garcom($chamado_garcom) {
+    	$id = mysql_real_escape_string($chamado_garcom->get_id());
+    	$mesa_id = mysql_real_escape_string($chamado_garcom->get_mesa_id());
+    	$data_hora = mysql_real_escape_string($chamado_garcom->get_data_hora_mysql());
+    	$consulta = mysql_query("SELECT c.id
+    	    						FROM chamados_garcom c 
+    	    						WHERE c.id = $id");
+    	if (mysql_num_rows($consulta) == 1) {
+    		$salvar = mysql_query("UPDATE chamados_garcom
+    	    						SET	mesa_id = $mesa_id,
+    	    							data_hora = '$data_hora'
+    	    						WHERE id = $id");
+    	}
+    	else {
+    		$salvar = mysql_query("INSERT INTO chamados_garcom (mesa_id, data_hora) VALUES (
+    								$mesa_id,
+    								'$data_hora')");
+    		$chamado_garcom->set_id(mysql_insert_id());
+    	}
+    
+    	if (!$salvar) {
+    		$erro = new Erro(mysql_error());
+    		return $erro->get_json();
+    	}
+    
+    	return $chamado_garcom->get_json();
     }
 	
 	function salvar_conta($conta) {
