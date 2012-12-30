@@ -8,7 +8,7 @@ $design->imprimir_topo();
 $bar = $banco->recupera_bar_pelo_login($_SESSION["usuario_logado"]);
 
 echo "
- <div class=\"titulo_secao\">Admin ".$bar->get_nome()."</div><br/><br/>
+ <div class=\"titulo_secao\">Gerência ".$bar->get_nome()."</div><br/><br/>
 ";
 
 if (isset($_REQUEST["erro"])) {

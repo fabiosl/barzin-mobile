@@ -59,9 +59,8 @@ class Design {
 		 	</div>
 		 </div>
 		 <div class=\"conteudo\">
-		 	<div style=\"position: fixed; top: 200px; margin-left: -230px; width: 200px; height: 100px; text-align: right;\">
-	 	 		<div id=\"textoMenu\" style=\"font-size: 14px; height: 20px; color: #ffffff; padding-bottom: 10px;\"></div>
-	 	 		<a href=\"".$this->raiz."/index.php\"><img src=\"".$this->raiz."/img/home.png\" onMouseOver=\"menu('Página inicial')\" onMouseOut=\"menu('')\" /></a><br/><br/>
+		 	<div style=\"position: fixed; top: 200px; margin-left: -230px; width: 200px; text-align: right;\">
+	 	 		<div id=\"textoMenu\" style=\"font-size: 14px; height: 15px; color: #ffffff; padding-bottom: 10px;\"></div>
 	 	";
 		if (isset($this->login_usuario)) {
 			$tipo_usuario = $banco->get_tipo_usuario($this->login_usuario);
@@ -74,8 +73,10 @@ class Design {
 		} 
 		else {
 			echo "
-			 <a href=\"".$this->raiz."/faleconosco/index.php\"><img src=\"".$this->raiz."/img/contato.png\" onMouseOver=\"menu('Fale conosco')\" onMouseOut=\"menu('')\" /></a><br/><br/>
-			 <a href=\"".$this->raiz."/comofunciona.php\"><img src=\"".$this->raiz."/img/ajuda.png\" onMouseOver=\"menu('Como funciona')\" onMouseOut=\"menu('')\" /></a><br/>
+			 <a class=\"link_menu\" href=\"".$this->raiz."/index.php\"><img src=\"".$this->raiz."/img/home.png\" onMouseOver=\"menu('Página inicial')\" onMouseOut=\"menu('')\" /></a>
+			 <a class=\"link_menu\" href=\"".$this->raiz."/cadastro.php\"><img src=\"".$this->raiz."/img/cadastrar.png\" onMouseOver=\"menu('Cadastrar seu bar')\" onMouseOut=\"menu('')\" /></a>
+			 <a class=\"link_menu\" href=\"".$this->raiz."/faleconosco/index.php\"><img src=\"".$this->raiz."/img/contato.png\" onMouseOver=\"menu('Fale conosco')\" onMouseOut=\"menu('')\" /></a>
+			 <a class=\"link_menu\" href=\"".$this->raiz."/comofunciona.php\"><img src=\"".$this->raiz."/img/ajuda.png\" onMouseOver=\"menu('Como funciona')\" onMouseOut=\"menu('')\" /></a>
 			";
 		}
 	 	echo "
@@ -85,17 +86,20 @@ class Design {
 	
 	public function imprimir_menu_gerente() {
 		echo "
-		 <a href=\"".$this->raiz."/cardapio/index.php\"><img src=\"".$this->raiz."/img/cardapio.png\" onMouseOver=\"menu('Controle do Cardápio')\" onMouseOut=\"menu('')\" /></a><br/><br/>
-		 <a href=\"".$this->raiz."/mesas/index.php\"><img src=\"".$this->raiz."/img/mesa.png\" onMouseOver=\"menu('Controle de Mesas')\" onMouseOut=\"menu('')\" /></a><br/><br/>
-		 <a href=\"".$this->raiz."/faleconosco/index.php\"><img src=\"".$this->raiz."/img/contato.png\" onMouseOver=\"menu('Fale conosco')\" onMouseOut=\"menu('')\" /></a><br/><br/>
-		 <a href=\"".$this->raiz."/ajudaGerente.php\"><img src=\"".$this->raiz."/img/ajuda.png\" onMouseOver=\"menu('Ajuda')\" onMouseOut=\"menu('')\" /></a><br/>
+		 <a class=\"link_menu\" href=\"".$this->raiz."/index.php\"><img src=\"".$this->raiz."/img/home.png\" onMouseOver=\"menu('Página inicial')\" onMouseOut=\"menu('')\" /></a>
+		 <a class=\"link_menu\" href=\"".$this->raiz."/cardapio/index.php\"><img src=\"".$this->raiz."/img/cardapio.png\" onMouseOver=\"menu('Controle do Cardápio')\" onMouseOut=\"menu('')\" /></a>
+		 <a class=\"link_menu\" href=\"".$this->raiz."/mesas/index.php\"><img src=\"".$this->raiz."/img/mesa.png\" onMouseOver=\"menu('Controle de Mesas')\" onMouseOut=\"menu('')\" /></a>
+		 <a class=\"link_menu\" href=\"".$this->raiz."/alterarCadastro.php\"><img src=\"".$this->raiz."/img/cadastrar.png\" onMouseOver=\"menu('Alterar informações do bar')\" onMouseOut=\"menu('')\" /></a>
+		 <a class=\"link_menu\" href=\"".$this->raiz."/faleconosco/index.php\"><img src=\"".$this->raiz."/img/contato.png\" onMouseOver=\"menu('Fale conosco')\" onMouseOut=\"menu('')\" /></a>
+		 <a class=\"link_menu\" href=\"".$this->raiz."/ajudaGerente.php\"><img src=\"".$this->raiz."/img/ajuda.png\" onMouseOver=\"menu('Ajuda')\" onMouseOut=\"menu('')\" /></a>
 		";
 	}
 	
 	public function imprimir_menu_funcionario() {
 		echo "
-		 <a href=\"".$this->raiz."/mesas/index.php\"><img src=\"".$this->raiz."/img/mesa.png\" onMouseOver=\"menu('Controle de Mesas')\" onMouseOut=\"menu('')\" /></a><br/><br/>
-		 <a href=\"".$this->raiz."/ajudaFuncionario.php\"><img src=\"".$this->raiz."/img/ajuda.png\" onMouseOver=\"menu('Ajuda')\" onMouseOut=\"menu('')\" /></a><br/>
+		 <a class=\"link_menu\" href=\"".$this->raiz."/index.php\"><img src=\"".$this->raiz."/img/garcom.png\" onMouseOver=\"menu('Interação com Clientes')\" onMouseOut=\"menu('')\" /></a>
+		 <a class=\"link_menu\" href=\"".$this->raiz."/mesas/index.php\"><img src=\"".$this->raiz."/img/mesa.png\" onMouseOver=\"menu('Controle de Mesas')\" onMouseOut=\"menu('')\" /></a>
+		 <a class=\"link_menu\" href=\"".$this->raiz."/ajudaFuncionario.php\"><img src=\"".$this->raiz."/img/ajuda.png\" onMouseOver=\"menu('Ajuda')\" onMouseOut=\"menu('')\" /></a>
 		";
 	}
 	
