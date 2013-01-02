@@ -56,6 +56,10 @@
   * Recebe: nome_pessoa, id_pessoa
   * Retorna: JSON da pessoa alterada, ou JSON de erro
 
+= pessoas/pessoas_na_mesa.php =
+  * Recebe: codigo_mesa, ultima_atualizacao
+  * Retorna: "0" caso ultima_atualizacao já seja a mais atual, JSON de array de pessoas caso haja dados mais atuais que ultima_atualizacao, ou JSON de erro
+
 = pessoas/remover_pessoa.php = 
   * Recebe: id_pessoa
   * Retorna: "ok" se remover, string mostrando o erro caso contrário
