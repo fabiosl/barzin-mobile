@@ -1,4 +1,6 @@
 <?php
+header('Access-Control-Allow-Origin: *');
+
 include_once '../../classes/dao.php';
 include_once '../../classes/item.php';
 include_once '../../classes/SimpleImage.php';
