@@ -31,7 +31,7 @@
 = mesas/conectar_a_mesa.php =
 
   * Recebe: codigo_mesa, id_bar
-  * Retorna: JSON da mesa, ou JSON de erro
+  * Retorna: JSON de erro ou JSON contendo mesa, nome_bar e conta
 
 = pedidos/alterar_pedido.php = 
 
