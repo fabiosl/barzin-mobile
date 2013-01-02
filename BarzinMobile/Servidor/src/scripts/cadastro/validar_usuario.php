@@ -1,8 +1,7 @@
 <?php
+header('Access-Control-Allow-Origin: *');
+
 include_once '../../classes/dao.php';
-include_once '../../classes/bar.php';
-include_once '../../classes/cardapio.php';
-include_once '../../classes/erro.php';
 
 $banco = new DAO();
 

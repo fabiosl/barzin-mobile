@@ -15,10 +15,17 @@ class DAO {
     function DAO() {
     	date_default_timezone_set ('America/Recife');
     	
-		$host = "localhost";
-		$usuario = "barzin";
-		$senha = "123456";
-		$db = "barzin";
+    	// Online no JPRibeiro.com
+// 		$host = "localhost";
+// 		$usuario = "jpribeir_barzin";
+// 		$senha = "b4rz1n";
+// 		$db = "jpribeir_barzin";
+    	
+    	// Local
+    	$host = "localhost";
+    	$usuario = "barzin";
+    	$senha = "123456";
+    	$db = "barzin";
     	
     	mysql_connect($host, $usuario, $senha);
     	mysql_select_db($db);
@@ -684,13 +691,18 @@ class DAO {
     	$codigo_mesa = mysql_real_escape_string($codigo_mesa);
     	$id_bar = mysql_real_escape_string($id_bar);
     	
+    	$bar = $this->recupera_bar($id_bar);
+    	if (get_class($bar) != "Bar") {
+    		return new Erro("Não foi encontrado bar com id $id_bar");
+    	}
+    	
     	$consulta_mesa = mysql_query("SELECT m.id
-                						FROM mesas m
+                						FROM mesas m 
                 						WHERE m.codigo = '$codigo_mesa'
                 							AND m.bar_id = $id_bar");
                 							
     	if (mysql_num_rows($consulta_mesa) != 1) {
-    		return new Erro("Não foi encontrada mesa com o código $codigo_mesa, no bar com id $id_bar");
+    		return new Erro("Não foi encontrada mesa com o código $codigo_mesa, no bar ".$bar->get_nome());
     	}
     	list($id) = mysql_fetch_array($consulta_mesa);
     	return $this->recupera_mesa($id);
