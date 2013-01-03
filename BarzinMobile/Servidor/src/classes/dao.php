@@ -16,16 +16,16 @@ class DAO {
     	date_default_timezone_set ('America/Recife');
     	
     	// Online no JPRibeiro.com
-// 		$host = "localhost";
-// 		$usuario = "jpribeir_barzin";
-// 		$senha = "b4rz1n";
-// 		$db = "jpribeir_barzin";
+		$host = "localhost";
+		$usuario = "jpribeir_barzin";
+		$senha = "b4rz1n";
+		$db = "jpribeir_barzin";
     	
     	// Local
-    	$host = "localhost";
-    	$usuario = "barzin";
-    	$senha = "123456";
-    	$db = "barzin";
+//     	$host = "localhost";
+//     	$usuario = "barzin";
+//     	$senha = "123456";
+//     	$db = "barzin";
     	
     	mysql_connect($host, $usuario, $senha);
     	mysql_select_db($db);
@@ -63,6 +63,17 @@ class DAO {
     									$id_pedido, 
     									".$pessoa->get_id().")");
     	}
+    }
+    
+    function atualiza_ultima_atualizacao_pessoas($id_mesa) {
+    	$id_mesa = mysql_real_escape_string($id_mesa);
+    	$atualizar = mysql_query("UPDATE mesas
+    								SET ultima_atualizacao_pessoas = NOW() 
+    								WHERE id = $id_mesa");
+    	if (!$atualizar) {
+    		return mysql_error();
+    	}
+    	return "ok";
     }
     
     function cadastrar_bar($bar, $admin_senha, $func_senha) {
@@ -282,12 +293,13 @@ class DAO {
     function excluir_pessoa($id_pessoa) {
     	$id_pessoa = mysql_real_escape_string($id_pessoa);
     	
-    	$consulta_se_existe = mysql_query("SELECT * 
-    										FROM pessoas 
-    										WHERE id = $id_pessoa");
+    	$consulta_se_existe = mysql_query("SELECT p.mesa_id 
+    										FROM pessoas p 
+    										WHERE p.id = $id_pessoa");
     	if (mysql_num_rows($consulta_se_existe) != 1) {
     		return "Não foi encontrada pessoa com ID $id_pessoa";
     	}
+    	list($mesa_id) = mysql_fetch_array($consulta_se_existe);
     	
     	$consulta_pedidos = mysql_query("SELECT *
     				    					FROM pedidos_pessoas pp, pedidos p  
@@ -308,10 +320,16 @@ class DAO {
     	}
     	
     	$excluir = mysql_query("DELETE FROM pessoas
-        				    		WHERE id=$id_pessoa");
+        				    		WHERE id = $id_pessoa");
     	if (!$excluir) {
     		return mysql_error();
     	}
+    	
+    	$resposta = $this->atualiza_ultima_atualizacao_pessoas($mesa_id);
+    	if ($resposta != "ok") {
+    		return $resposta;
+    	}
+    	
     	return "ok";
     }
     
@@ -415,7 +433,7 @@ class DAO {
     	$id_bar = mysql_real_escape_string($id_bar);
     	$consulta_bar = mysql_query("SELECT b.*
         								FROM bares b
-        	        					WHERE b.id=$id_bar");
+        	        					WHERE b.id = $id_bar");
     	if (mysql_num_rows($consulta_bar)) {
     		$bar = new Bar();
     		$bar->setar_atributos_consulta($consulta_bar);
@@ -649,7 +667,7 @@ class DAO {
     
     function recupera_mesa($id_mesa) {
     	$id_mesa = mysql_real_escape_string($id_mesa);
-    	$consulta_mesa = mysql_query("SELECT m.*
+    	$consulta_mesa = mysql_query("SELECT m.id, m.bar_id, m.nome, m.codigo, UNIX_TIMESTAMP(m.ultima_atualizacao_pessoas) AS ultima_atualizacao_pessoas
     										FROM mesas m
             								WHERE m.id=$id_mesa");
     	if (mysql_num_rows($consulta_mesa)) {
@@ -862,6 +880,15 @@ class DAO {
     	$consulta = mysql_query("SELECT UNIX_TIMESTAMP(b.ultima_atualizacao_pedidos) 
     								FROM bares b 
     								WHERE b.id = $id_bar");
+    	list($timestamp) = mysql_fetch_array($consulta);
+    	return $timestamp;
+    }
+    
+    function recupera_ultima_atualizacao_pessoas($id_mesa) {
+    	$id_mesa = mysql_real_escape_string($id_mesa);
+    	$consulta = mysql_query("SELECT UNIX_TIMESTAMP(m.ultima_atualizacao_pessoas)
+    	    						FROM mesas m  
+    	    						WHERE m.id = $id_mesa");
     	list($timestamp) = mysql_fetch_array($consulta);
     	return $timestamp;
     }
@@ -1207,6 +1234,12 @@ class DAO {
 				}
 			}
 		}
+		
+		$resposta = $this->atualiza_ultima_atualizacao_pessoas($mesa_id);
+		if ($resposta != "ok") {
+			return new Erro($resposta);
+		}
+		
 		$pessoa = $this->recupera_pessoa($id_pessoa);
 		return $pessoa;
 	}
