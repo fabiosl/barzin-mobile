@@ -21,10 +21,10 @@ if (get_class($bar) == "Erro") {
 }
 
 $conta = $banco->recupera_conta_aberta($mesa->get_id());
-if (get_class($conta) == "Erro") {
-	echo $conta->get_json();
-	exit;
+$conta_json = "{}";
+if ($conta != null && get_class($conta) == "Conta") {
+	$conta_json = $conta->get_json();
 }
 
-echo "{\"mesa\": ".$mesa->get_json().", \"bar\": ".$bar->get_json().", \"conta\": ".$conta->get_json()."}";
+echo "{\"mesa\": ".$mesa->get_json().", \"bar\": ".$bar->get_json().", \"conta\": ".$conta_json."}";
 ?>

@@ -1,14 +1,14 @@
--- Antes de tudo, criar o banco e o usu�rio:
+-- Antes de tudo, criar o banco e o usuário:
 --
 -- Entra no phpMyAdmin:
 --	Tela inicial > Banco de Dados > Criar novo banco de dados
 --		banco: barzin
 --		collation: utf8_general_ci
---	Depois de criado, entrar em Tela inicial > barzin (na lista � esquerda) > Privil�gios > Adicionar novo usu�rio
---		Nome do usu�rio: barzin
+--	Depois de criado, entrar em Tela inicial > barzin (na lista � esquerda) > Privilégios > Adicionar novo usuário
+--		Nome do usuário: barzin
 --		Servidor: localhost
 --		Senha: 123456
---		Conceder todos os privil�gios no banco de dados "barzin"
+--		Conceder todos os privilégios no banco de dados "barzin"
 
 CREATE TABLE usuarios (
     login   VARCHAR(20)			PRIMARY KEY,
@@ -60,10 +60,11 @@ CREATE TABLE itens (
 );
 
 CREATE TABLE mesas (
-	id			SERIAL 				PRIMARY KEY,
-	bar_id		BIGINT UNSIGNED 	NOT NULL,
-	codigo 		VARCHAR(4) 			UNIQUE,
-	nome 		VARCHAR(30) 		NOT NULL,
+	id							SERIAL 				PRIMARY KEY,
+	bar_id						BIGINT UNSIGNED 	NOT NULL,
+	codigo 						VARCHAR(4) 			UNIQUE,
+	nome 						VARCHAR(30) 		NOT NULL,
+	ultima_atualizacao_pessoas 	TIMESTAMP 			NOT NULL,
 	
 	CONSTRAINT mesas_bar_fk FOREIGN KEY (bar_id) REFERENCES bares(id) ON DELETE CASCADE
 );

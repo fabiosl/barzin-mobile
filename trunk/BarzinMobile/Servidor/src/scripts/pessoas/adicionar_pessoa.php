@@ -17,7 +17,13 @@ if (get_class($mesa) == "Erro") {
 
 $pessoa = new Pessoa($nome_pessoa, $mesa->get_id());
 
-$resultado = $banco->salvar_pessoa($pessoa);
+$pessoa_salva = $banco->salvar_pessoa($pessoa);
+if (get_class($pessoa_salva) == "Erro") {
+	echo $pessoa_salva->get_json();
+	exit;
+}
 
-echo $resultado->get_json();
+$ultima_atualizacao_pessoas = $banco->recupera_ultima_atualizacao_pessoas($mesa->get_id());
+
+echo "{\"pessoa\": ".$pessoa_salva->get_json().", \"ultima_atualizacao_pessoas\": ".$ultima_atualizacao_pessoas."}";
 ?>
