@@ -26,5 +26,7 @@ if ($conta != null && get_class($conta) == "Conta") {
 	$conta_json = $conta->get_json();
 }
 
-echo "{\"mesa\": ".$mesa->get_json().", \"bar\": ".$bar->get_json().", \"conta\": ".$conta_json."}";
+$cardapio = $banco->recupera_cardapio($bar);
+
+echo "{\"mesa\": ".$mesa->get_json().", \"bar\": ".$bar->get_json().", \"conta\": ".$conta_json.", \"cardapio\": ".$cardapio->get_json()."}";
 ?>
