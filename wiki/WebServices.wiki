@@ -31,7 +31,7 @@
 = mesas/conectar_a_mesa.php =
 
   * Recebe: codigo_mesa, id_bar
-  * Retorna: JSON de erro ou JSON contendo mesa, nome_bar, conta e cardapio
+  * Retorna: JSON de erro ou JSON contendo mesa, nome_bar e cardapio
 
 = pedidos/alterar_pedido.php = 
 
@@ -42,6 +42,11 @@
 
   * Recebe: item_id, quantidade, comentario, pessoas`[]` (Pessoas tem que ser um array de ID de pessoas. Pra passar um array, é só colocar vários parametros com o mesmo nome, assim: pessoas`[]`)
   * Retorna: JSON do pedido ou JSON de erro
+
+= pedidos/recuperar_pedidos.php = 
+
+  * Recebe: codigo_mesa, ultima_atualizacao_pedidos
+  * Retorna: JSON contendo os pedidos (propriedades já processadas) ou JSON de erro
 
 = pedidos/solicitar_cancelamento.php = 
 
