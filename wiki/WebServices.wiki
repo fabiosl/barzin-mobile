@@ -46,7 +46,7 @@
 = pedidos/recuperar_pedidos.php = 
 
   * Recebe: codigo_mesa, ultima_atualizacao_pedidos
-  * Retorna: JSON de erro ou JSON contendo pedidos (propriedades já processadas), ultima_atualizacao_pedidos e estado_conta
+  * Retorna: JSON de erro ou JSON contendo pedidos (propriedades já processadas) e ultima_atualizacao_pedidos
 
 = pedidos/solicitar_cancelamento.php = 
 
