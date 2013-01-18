@@ -20,6 +20,7 @@ $ultima_atualizacao_banco = $banco->recupera_ultima_atualizacao_pessoas($mesa->g
 if (intval($ultima_atualizacao_pessoas) < $ultima_atualizacao_banco) {
 	$pessoas = $banco->recupera_pessoas_por_mesa($mesa->get_id());
 	$retorno = array();
+	$retorno["pessoas"] = array();
 	foreach ($pessoas as $pessoa) {
 		$retorno["pessoas"][] = array(
 									"id" => $pessoa->get_id(), 
