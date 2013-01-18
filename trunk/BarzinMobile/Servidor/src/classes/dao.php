@@ -13,8 +13,6 @@ include_once 'chamado_garcom.php';
 class DAO {
 
     function DAO() {
-    	date_default_timezone_set ('America/Recife');
-    	
     	// Online no JPRibeiro.com
 		$host = "localhost";
 		$usuario = "jpribeir_barzin";
@@ -22,6 +20,7 @@ class DAO {
 		$db = "jpribeir_barzin";
     	
     	// Local
+//     	date_default_timezone_set ('America/Recife');
 //     	$host = "localhost";
 //     	$usuario = "barzin";
 //     	$senha = "123456";
@@ -772,6 +771,24 @@ class DAO {
         													AND c.mesa_id=m.id
         													AND m.bar_id=$id_bar
         												ORDER BY p.data_hora ASC");
+    	while (list($id_pedido) = mysql_fetch_array($consulta_pedidos_pendentes)) {
+    		$pedido = $this->recupera_pedido($id_pedido);
+    		if (get_class($pedido) == "Pedido") {
+    			$pedidos[] = $pedido;
+    		}
+    	}
+    	return $pedidos;
+    }
+    
+    function recupera_pedidos_da_mesa($id_mesa) {
+    	$pedidos = array();
+    	$id_mesa = mysql_real_escape_string($id_mesa);
+    	$consulta_pedidos_pendentes = mysql_query("SELECT DISTINCT p.id
+            												FROM pedidos p, contas c
+            												WHERE p.conta_id = c.id
+            													AND c.mesa_id = $id_mesa
+            													AND c.estado = 'Aberta'
+            												ORDER BY p.data_hora DESC");
     	while (list($id_pedido) = mysql_fetch_array($consulta_pedidos_pendentes)) {
     		$pedido = $this->recupera_pedido($id_pedido);
     		if (get_class($pedido) == "Pedido") {

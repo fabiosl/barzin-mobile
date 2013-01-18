@@ -103,21 +103,21 @@ if ($operacao == "salvar_foto") {
 			$imagem->resizeToHeight(350);
 		}
 		$imagem->save($nome_arquivo_imagem);
-		$quadro = imagecreatetruecolor(75, 75);
+		$quadro = imagecreatetruecolor(80, 80);
 		$preto = imagecolorallocate($quadro, 0, 0, 0);
 		imagefill($quadro, 0, 0, $preto);
 		if ($maior == "largura") {
-			$imagem->resizeToWidth(75);
+			$imagem->resizeToWidth(80);
 			$posicao_x = 0;
-			$posicao_y = round((75 - $imagem->getHeight())/2);
+			$posicao_y = round((80 - $imagem->getHeight())/2);
 		}
 		elseif ($maior == "altura") {
-			$imagem->resizeToHeight(75);
-			$posicao_x = round((75 - $imagem->getWidth())/2);
+			$imagem->resizeToHeight(80);
+			$posicao_x = round((80 - $imagem->getWidth())/2);
 			$posicao_y = 0;
 		}
 		imagecopy ($quadro, $imagem->image, $posicao_x, $posicao_y, 0, 0, $imagem->getWidth(), $imagem->getHeight());
-		imagejpeg($quadro, $nome_arquivo_thumb, 75);
+		imagejpeg($quadro, $nome_arquivo_thumb, 80);
 		unlink($nome_temp);
 	}
 	
