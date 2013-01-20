@@ -14,17 +14,17 @@ class DAO {
 
     function DAO() {
     	// Online no JPRibeiro.com
-		$host = "localhost";
-		$usuario = "jpribeir_barzin";
-		$senha = "b4rz1n";
-		$db = "jpribeir_barzin";
+		//$host = "localhost";
+		//$usuario = "jpribeir_barzin";
+		//$senha = "b4rz1n";
+		//$db = "jpribeir_barzin";
     	
     	// Local
-//     	date_default_timezone_set ('America/Recife');
-//     	$host = "localhost";
-//     	$usuario = "barzin";
-//     	$senha = "123456";
-//     	$db = "barzin";
+     	date_default_timezone_set ('America/Recife');
+     	$host = "localhost";
+     	$usuario = "barzin";
+     	$senha = "123456";
+     	$db = "barzin";
     	
     	mysql_connect($host, $usuario, $senha);
     	mysql_select_db($db);
