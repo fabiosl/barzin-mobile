@@ -1,0 +1,88 @@
+hr {
+	border: 1px solid #555555;
+	color: #555555;
+	background-color: #555555;
+}
+
+table.tabela_pedidos_atendidos, .tabela_pedidos_atendidos tr, .tabela_pedidos_atendidos td, .tabela_pedidos_atendidos th, 
+table.tabela_pedidos_pendentes, .tabela_pedidos_pendentes tr, .tabela_pedidos_pendentes td, .tabela_pedidos_pendentes th {
+	border-collapse: collapse;
+	border: 1px solid #555555;
+}
+
+table {
+	width: 100%;
+}
+
+.tabela_pedidos_atendidos th {
+	background-color: #00A60E;
+}
+
+.tabela_pedidos_atendidos tr:nth-child(even) {
+	background-color: #00750A;
+}
+
+.tabela_pedidos_atendidos tr:nth-child(odd) {
+	background-color: #004A06;
+}
+
+.tabela_pedidos_pendentes th {
+	background-color: #ff6c00;
+}
+
+.tabela_pedidos_pendentes tr:nth-child(even) {
+	background-color: #BF5100;
+}
+
+.tabela_pedidos_pendentes tr:nth-child(odd) {
+	background-color: #873900;
+}
+
+.atualizar {
+	background-image: url('../img/reload.png');
+	background-repeat: no-repeat;
+	background-position: top left;
+	padding-left: 25px;
+}
+
+.texto-pequeno {
+	font-size: small;
+	font-weight: normal;
+	white-space: normal;
+}
+
+.preco {
+	font-size: large;
+}
+
+.breadcrumbs-cardapio {
+	background-image: url('../img/seta.png');
+	background-repeat: no-repeat;
+	background-position: top left;
+	padding-left: 20px;
+	padding-right: 5px;
+}
+
+.voltar {
+	background-image: url('../img/back.png');
+	background-repeat: no-repeat;
+	background-position: top left;
+	padding-left: 20px;
+	padding-right: 5px;	
+}
+
+.imagem-item {
+	float: left;
+	margin: 0 10px 10px 0;
+}
+
+.titulo {
+	color: #ff6c00;
+	font-size: small;
+	font-weight: normal;
+	white-space: normal;
+}
+
+.laranja {
+	color: #ff6c00;
+}
