@@ -1,3 +1,5 @@
+DELETE FROM solicitacoes_conta;
+
 DELETE FROM chamados_garcom;
 
 DELETE FROM pedidos_pessoas;

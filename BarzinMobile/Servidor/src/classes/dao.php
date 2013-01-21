@@ -9,6 +9,7 @@ include_once 'erro.php';
 include_once 'mesa.php';
 include_once 'pessoa.php';
 include_once 'chamado_garcom.php';
+include_once 'solicitacao_conta.php';
 
 class DAO {
 
@@ -171,6 +172,14 @@ class DAO {
     									FROM pedidos p
     									WHERE p.item_id=$id_item");
     	return mysql_num_rows($consulta) > 0;
+    }
+
+    function consulta_ha_solicitacao_conta_da_mesa($id_mesa) {
+        $id_mesa = mysql_real_escape_string($id_mesa);
+        $consulta = mysql_query("SELECT *
+                                    FROM solicitacoes_conta s
+                                    WHERE s.mesa_id = $id_mesa");
+        return mysql_num_rows($consulta) > 0;
     }
     
     function consulta_num_categorias_do_bar($id_bar) {
@@ -342,6 +351,16 @@ class DAO {
     	}
     	return "ok";
     }
+
+    function excluir_solicitacao_conta($id_solicitacao_conta) {
+        $id_solicitacao_conta = mysql_real_escape_string($id_solicitacao_conta);
+        $excluir = mysql_query("DELETE FROM solicitacoes_conta
+                                    WHERE id = $id_solicitacao_conta");
+        if (!$excluir) {
+            return mysql_error();
+        }
+        return "ok";
+    }
     
     function fechar_conta($id_mesa) {
     	$id_mesa = mysql_real_escape_string($id_mesa);
@@ -353,13 +372,25 @@ class DAO {
     	}
     	
     	$remover_pedidos_pendentes = mysql_query("DELETE FROM p
-    												USING pedidos p, contas c, mesas m   
+    												USING pedidos p, contas c
     												WHERE p.conta_id = c.id 
-    													AND c.mesa_id = m.id 
+    													AND c.mesa_id = $id_mesa
     													AND p.estado = 'Pendente'");
     	if (!$remover_pedidos_pendentes) {
     		return mysql_error();
     	}
+
+        $remover_chamados_garcom = mysql_query("DELETE FROM chamados_garcom
+                                                    WHERE mesa_id = $id_mesa");
+        if (!$remover_chamados_garcom) {
+            return mysql_error();
+        }
+
+        $remover_solicitacoes_conta = mysql_query("DELETE FROM solicitacoes_conta
+                                                    WHERE mesa_id = $id_mesa");
+        if (!$remover_solicitacoes_conta) {
+            return mysql_error();
+        }
     	
     	$atualizar = mysql_query("UPDATE contas 
     								SET estado = 'Fechada', 
@@ -879,6 +910,33 @@ class DAO {
     	}
     	return $lista_pessoas;
     }
+
+    function recupera_solicitacao_conta($id_solicitacao_conta) {
+        $id_solicitacao_conta = mysql_real_escape_string($id_solicitacao_conta);
+        $consulta_solicitacao = mysql_query("SELECT s.id, s.mesa_id, UNIX_TIMESTAMP(s.data_hora) AS data_hora 
+                                                FROM solicitacoes_conta s
+                                                WHERE s.id = $id_solicitacao_conta");
+        if (mysql_num_rows($consulta_solicitacao)) {
+            $solicitacao_conta = new Solicitacao_conta();
+            $solicitacao_conta->setar_atributos_consulta($consulta_solicitacao);
+            return $solicitacao_conta;
+        }
+        return new Erro("Não foi encontrada solicitação de conta com o ID $id_solicitacao_conta");
+    }
+    
+    function recupera_solicitacoes_conta($id_bar) {
+        $id_bar = mysql_real_escape_string($id_bar);
+        $consulta = mysql_query("SELECT s.id
+                                    FROM solicitacoes_conta s, mesas m
+                                    WHERE s.mesa_id = m.id 
+                                        AND m.bar_id = $id_bar
+                                    ORDER BY s.data_hora ASC");
+        $lista_solicitacoes = array();
+        while (list($id_solicitacao) = mysql_fetch_array($consulta)) {
+            $lista_solicitacoes[] = $this->recupera_solicitacao_conta($id_solicitacao);
+        }
+        return $lista_solicitacoes;
+    }
     
     function recupera_total_pedido($id_pedido) {
     	$id_pedido = mysql_real_escape_string($id_pedido);
@@ -1260,6 +1318,34 @@ class DAO {
 		$pessoa = $this->recupera_pessoa($id_pessoa);
 		return $pessoa;
 	}
+
+    function salvar_solicitacao_conta($solicitacao_conta) {
+        $id = mysql_real_escape_string($solicitacao_conta->get_id());
+        $mesa_id = mysql_real_escape_string($solicitacao_conta->get_mesa_id());
+        $data_hora = mysql_real_escape_string($solicitacao_conta->get_data_hora_mysql());
+        $consulta = mysql_query("SELECT s.id
+                                    FROM solicitacoes_conta s 
+                                    WHERE s.id = $id");
+        if (mysql_num_rows($consulta) == 1) {
+            $salvar = mysql_query("UPDATE solicitacoes_conta
+                                    SET mesa_id = $mesa_id,
+                                        data_hora = '$data_hora'
+                                    WHERE id = $id");
+        }
+        else {
+            $salvar = mysql_query("INSERT INTO solicitacoes_conta (mesa_id, data_hora) VALUES (
+                                    $mesa_id,
+                                    '$data_hora')");
+            $solicitacao_conta->set_id(mysql_insert_id());
+        }
+    
+        if (!$salvar) {
+            $erro = new Erro(mysql_error());
+            return $erro->get_json();
+        }
+    
+        return $solicitacao_conta->get_json();
+    }
 	
 	function setar_precisa_atualizar_pedidos($id_bar) {
 		$id_bar = mysql_real_escape_string($id_bar);

@@ -20,6 +20,7 @@ class Design {
 		 <meta http-equiv=\"X-UA-Compatible\" content=\"IE=8\" />
 		 <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">
 		 <title>Barzin - Interação em Bares e Restaurantes!</title>
+		 <link rel=\"stylesheet\" href=\"".$this->raiz."/css/colorbox.css\" type=\"text/css\">
 		 <link rel=\"stylesheet\" href=\"".$this->raiz."/css/estilo.css\" type=\"text/css\">
  		 <script type=\"text/javascript\" src=\"".$this->raiz."/javascripts/jquery-1.8.3.min.js\" charset=\"utf-8\"></script>
 		 <script type=\"text/javascript\" src=\"".$this->raiz."/javascripts/funcoes.js\" charset=\"utf-8\"></script>
@@ -112,7 +113,7 @@ class Design {
 		 	</div>
 		 	<div style=\"display: inline-block;\">
 		 		<b>Barzin - Sistema de Interação para Bares e Restaurantes - <a href=\"".$this->raiz."/faleconosco/index.php\">Entre em contato</a></b><br/>
-		 		Desenvolvido por <a href=\"http://jpribeiro.com\" target=\"_blank\">João Paulo Ribeiro</a>, <a href=\"http://raissasarmento.com\" target=\"_blank\">Raíssa Sarmento</a> e <a href=\"http://raquelguimaraes.com\" target=\"_blank\">Raquel Guimarães</a>
+		 		Desenvolvido por <a href=\"http://jpribeiro.com\" target=\"_blank\">João Paulo Ribeiro</a>, <a href=\"http://dsc.ufcg.edu.br/~laerte\" target=\"_blank\">Laerte Xavier</a>, <a href=\"http://raissasarmento.com\" target=\"_blank\">Raíssa Sarmento</a> e <a href=\"http://raquelguimaraes.com\" target=\"_blank\">Raquel Guimarães</a>
 		 	</div>
 		 </div>
 		 </div>

@@ -118,3 +118,11 @@ CREATE TABLE chamados_garcom (
 	
 	CONSTRAINT mesa_chamados_fk FOREIGN KEY (mesa_id) REFERENCES mesas(id) ON DELETE CASCADE
 );
+
+CREATE TABLE solicitacoes_conta (
+    id          SERIAL              PRIMARY KEY, 
+    mesa_id     BIGINT UNSIGNED     NOT NULL, 
+    data_hora   TIMESTAMP, 
+
+    CONSTRAINT mesa_solicitacoes_conta_fk FOREIGN KEY (mesa_id) REFERENCES mesas(id) ON DELETE CASCADE
+);
