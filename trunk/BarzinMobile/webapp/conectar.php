@@ -2,8 +2,6 @@
 	include_once "classes/requisicoes.php";
     include_once "classes/sessao.php";
 
-    // JOAO PAULO
-
     if (Sessao::tem("codigo_mesa") && Sessao::tem("id_bar")) {
         header('Location: index.php');
         exit;
