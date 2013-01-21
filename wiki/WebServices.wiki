@@ -28,6 +28,10 @@
   * Recebe: codigo_mesa
   * JSON do chamado, ou JSON de erro
 
+= garcom/solicitar_conta.php =
+  * Recebe: codigo_mesa
+  * JSON da solicitação, ou JSON de erro
+
 = mesas/conectar_a_mesa.php =
 
   * Recebe: codigo_mesa, id_bar
