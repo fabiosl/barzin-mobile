@@ -16,6 +16,8 @@ $bar = $banco->recupera_bar_pelo_login($login_usuario);
 $ultima_atualizacao = $banco->recupera_ultima_atualizacao_pedidos($bar->get_id());
 
 echo "
+	<script src=\"javascripts/jquery.colorbox.js\" type=\"text/javascript\"></script>
+
 	<script type=\"text/javascript\">
 		var inicio_javascript = Math.round((new Date()).getTime() / 1000);	
 	
@@ -76,7 +78,9 @@ echo "
 				var nova_cor = colorToHex('rgb(' + vermelho + ', ' + verde + ', ' + azul + ')');
 				
 				$(this).attr('bgcolor', nova_cor);
-				$(this).children('.quanto_tempo').html('<b>Há ' + quanto_tempo(diferenca_em_segundos) + '</b>');
+				if (diferenca_em_segundos > 0) {
+					$(this).children('.quanto_tempo').html('<b>Há ' + quanto_tempo(diferenca_em_segundos) + '</b>');
+				}
 			});
 			
 			$('.chamado').each(function() {
@@ -84,7 +88,7 @@ echo "
 				var diferenca_javascript = Math.round((new Date()).getTime() / 1000) - inicio_javascript;
 				var diferenca_em_segundos = diferenca_servidor + diferenca_javascript;
 				
-				var tempo_total = 15 * 60; // 15 minutos
+				var tempo_total = 15 * 60; // 10 minutos
 				
 				// fundo começa com branco (rgb(255, 255, 255))
 				// fundo vai variando até azul marinho (rgb(22, 0, 185))
@@ -110,7 +114,47 @@ echo "
 				else {
 					$(this).css('color', '#ffffff');
 				}
-				$(this).children('.quanto_tempo').html('<b>Há ' + quanto_tempo(diferenca_em_segundos) + '</b>');
+
+				if (diferenca_em_segundos > 0) {
+					$(this).children('.quanto_tempo').html('<b>Há ' + quanto_tempo(diferenca_em_segundos) + '</b>');
+				}
+			});
+
+			$('.solicitacao_conta').each(function() {
+				var diferenca_servidor = ".time()." - $(this).children('.data_hora').text();
+				var diferenca_javascript = Math.round((new Date()).getTime() / 1000) - inicio_javascript;
+				var diferenca_em_segundos = diferenca_servidor + diferenca_javascript;
+				
+				var tempo_total = 15 * 60; // 10 minutos
+				
+				// fundo começa com branco (rgb(255, 255, 255))
+				// fundo vai variando até um roxo aí (rgb(131, 10, 191))
+				var vermelho = Math.round(((255 - 131) * (tempo_total - diferenca_em_segundos) / tempo_total) + 131);
+				if (vermelho < 131) {
+					vermelho = 131;
+				}
+				var verde = Math.round(((255 - 10) * (tempo_total - diferenca_em_segundos) / tempo_total) + 10);
+				if (verde < 10) {
+					verde = 10;
+				}
+				var azul = Math.round(((255 - 191) * (tempo_total - diferenca_em_segundos) / tempo_total) + 191);
+				if (azul < 191) {
+					azul = 191;
+				}
+				
+				var nova_cor = colorToHex('rgb(' + vermelho + ', ' + verde + ', ' + azul + ')');
+				
+				$(this).css('background-color', nova_cor);
+				if (brilhoDaCor(vermelho, verde, azul) > 125) {
+					$(this).css('color', '#000000');
+				}
+				else {
+					$(this).css('color', '#ffffff');
+				}
+				
+				if (diferenca_em_segundos > 0) {
+					$(this).children('.quanto_tempo').html('<b>Há ' + quanto_tempo(diferenca_em_segundos) + '</b>');
+				}
 			});
 		}
 		
@@ -194,11 +238,59 @@ echo "
 					} 
 				);
 			});
+
+			$('.marcar_solicitacao_atendida').click(function() {
+				$.post(
+					'scripts/garcom/atender_solicitacao_conta.php', 
+					{solicitacao_conta_id: $(this).children('div').text()},
+					function() {
+						window.location.reload();
+					} 
+				);
+			});
+
+			$('.ver_conta').click(function() {
+				var mesa_id = $(this).children('div').text();
+				$.colorbox({href: 'mesas/ver_conta_popup.php?mesa_id=' + mesa_id, width: \"70%\"});	
+			});
 			
 			reconstruirBlocos();
 		});
 	</script>
 ";
+
+$solicitacoes_conta = $banco->recupera_solicitacoes_conta($bar->get_id());
+
+if (count($solicitacoes_conta) > 0) {
+	echo "<h1>Mesas que pediram a conta</h1>";
+	echo "<table border=\"1\">";
+	$contador = 5;
+	foreach ($solicitacoes_conta as $solicitacao) {
+		if ($contador == 5) {
+			echo "<tr valign=\"top\">";
+			$contador = 0;
+		}
+		$contador++;
+		$mesa = $banco->recupera_mesa($solicitacao->get_mesa_id())->get_nome();
+		echo "
+		 <td width=\"20%\" align=\"center\" valign=\"middle\" style=\"color: #000;\" class=\"solicitacao_conta\">
+			 <b><font size=\"+2\">$mesa</font></b><br/>
+			 <span class=\"quanto_tempo\"><b>Agora</b></span><br/>
+			 <div style=\"display: none;\" class=\"data_hora\">".$solicitacao->get_data_hora()."</div>
+			 <button type=\"button\" class=\"ver_conta\">Ver conta<div style=\"display: none\">".$solicitacao->get_mesa_id()."</div></button><br/>
+			 <button type=\"button\" class=\"marcar_solicitacao_atendida\">Marcar atendido<div style=\"display: none\">".$solicitacao->get_id()."</div></button>
+		 </td>
+		";
+		if ($contador == 5) {
+			echo "</tr>";
+		}
+	}
+	while ($contador < 5) {
+		echo "<td width=\"20%\"></td>";
+		$contador++;
+	}
+	echo "</tr></table>";
+}
 
 $chamados = $banco->recupera_chamados_garcom($bar->get_id());
 
