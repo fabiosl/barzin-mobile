@@ -33,6 +33,44 @@ $cardapio = Sessao::get("cardapio");
 		var raiz_requisicao = "<?php echo Requisicoes::raiz_frontend; ?>";
 		var codigo_mesa = "<?php echo $codigo_mesa; ?>";
 
+		function setar_botoes_excluir() {
+			$('.excluir_pessoa').click(function(e) {
+				e.preventDefault();
+
+				var ultima_atualizacao_pessoas = $('#ultima_atualizacao_pessoas').val();
+				var nome_pessoa = $(this).data('nomepessoa');
+				var id_pessoa = $(this).data("idpessoa");
+				
+				if (!confirm("Tem certeza que quer remover " + nome_pessoa + " da mesa?")) {
+					return false;
+				}
+
+				$.mobile.loading('show', {
+											text: "Carregando", 
+											textVisible: true,
+											theme: 'a'
+											});
+				$.post(
+					'<?php echo Requisicoes::raiz_frontend; ?>pessoas/remover_pessoa.php?', 
+					{
+						'id_pessoa': id_pessoa, 
+						'random': Math.random()
+					}, 
+					function(retorno) {
+						$.mobile.loading('hide');
+						if (retorno == "ok") {
+							atualizar_pessoas(raiz_requisicao, codigo_mesa, ultima_atualizacao_pessoas);
+						}
+						else {
+							alert("Não foi possível excluir pessoa: " + retorno);
+						}
+					}, 
+					"text"
+				);
+			});
+		}
+		
+
 		function atualizar_pessoas_automaticamente() {
 			var ultima_atualizacao_pessoas = $('#ultima_atualizacao_pessoas').val();
 			atualizar_pessoas_backend(raiz_requisicao, codigo_mesa, ultima_atualizacao_pessoas);
