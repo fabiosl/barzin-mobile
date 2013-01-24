@@ -43,7 +43,7 @@ $cardapio = Sessao::get("cardapio");
 			atualizar_pedidos_backend(raiz_requisicao, codigo_mesa, ultima_atualizacao_pedidos);
 		}
 
-		// location.hash = "#pessoas";
+		location.hash = "#pessoas";
 		
 		var pedidos = new Array();
 		var pessoas = new Array();
