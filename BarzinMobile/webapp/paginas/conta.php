@@ -1,8 +1,10 @@
 <div data-role="page" id="conta" data-theme="a" >
 	
-	<?php echo Layout::imprimir_header($nome_bar, $nome_mesa, "Conta"); ?>
+	<?php echo Layout::imprimir_header("conta"); ?>
 
 	<div data-role="content">
+		<h1>Conta</h1>
+
 		<input type="hidden" id="ultima_atualizacao_pedidos" value="0" />
 
 		<a href="#" class="atualizar" id="atualizar_conta">Atualizar conta</a>
@@ -60,8 +62,6 @@
 		</div>
 		
     </div>
-
-    <?php echo Layout::imprimir_footer("conta"); ?>
 	
 </div>
 

@@ -6,6 +6,43 @@ function trim(str) {
 	return str.replace(/^\s+|\s+$/g,"");
 }
 
+function setar_botoes_excluir() {
+	$('.excluir_pessoa').click(function(e) {
+		e.preventDefault();
+
+		var ultima_atualizacao_pessoas = $('#ultima_atualizacao_pessoas').val();
+		var nome_pessoa = $(this).data('nomepessoa');
+		var id_pessoa = $(this).data("idpessoa");
+		
+		if (!confirm("Tem certeza que quer remover " + nome_pessoa + " da mesa?")) {
+			return false;
+		}
+
+		$.mobile.loading('show', {
+									text: "Carregando", 
+									textVisible: true,
+									theme: 'a'
+									});
+		$.post(
+			'<?php echo Requisicoes::raiz_frontend; ?>pessoas/remover_pessoa.php?', 
+			{
+				'id_pessoa': id_pessoa, 
+				'random': Math.random()
+			}, 
+			function(retorno) {
+				$.mobile.loading('hide');
+				if (retorno == "ok") {
+					atualizar_pessoas(raiz_requisicao, codigo_mesa, ultima_atualizacao_pessoas);
+				}
+				else {
+					alert("Não foi possível excluir pessoa: " + retorno);
+				}
+			}, 
+			"text"
+		);
+	});
+}
+
 function indice_elemento_com_id_no_array(id, array) {
 	for (var i = 0; i < array.length; i++) {
 		var elemento = array[i];
@@ -262,3 +299,34 @@ function atualizar_conta() {
 	$('#total').text(total.toFixed(2));
 
 }
+
+function limpar_header(id_pagina) {
+	if (jQuery.inArray(id_pagina, ["cardapio", "pessoas", "conta", "pendentes"]) == -1) {
+		id_pagina = "cardapio";
+	}
+
+	if (id_pagina == "pendentes") {
+		id_pagina = "conta";
+	}
+
+	// <id_pagina>: [<botao_no_header_pra_limpar>, <sub_menus_pra_esconder>]
+	hash = {
+		"cardapio": [".botao_pessoas_header, .botao_conta_header, .botao_outros_header", ".sub_menu_conta, .sub_menu_outros"], 
+		"pessoas": [".botao_cardapio_header, .botao_conta_header, .botao_outros_header", ".sub_menu_conta, .sub_menu_outros"], 
+		"conta": [".botao_pessoas_header, .botao_cardapio_header, .botao_outros_header", ".sub_menu_outros"]
+	}
+
+	// Limpar submenu
+	$(hash[id_pagina][1]).hide();
+
+	// Limpar botoes no menu
+	$(hash[id_pagina][0]).removeClass('ui-btn-active');
+}
+
+$('#conta, #pessoas, #cardapio, #pendentes').live("pagebeforeshow", function() {
+	limpar_header($(this).attr('id'));
+});
+
+$(function() {
+	limpar_header("cardapio");
+});

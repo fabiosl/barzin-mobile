@@ -86,3 +86,21 @@ table {
 .laranja {
 	color: #ff6c00;
 }
+
+.ui-content {
+	padding-top: 20px;
+}
+
+.ativo {
+	background-image: none;
+	background-color: #179b1f;
+}
+
+.sub-menu-ativo {
+	background-image: none;
+	background-color: #179b1f;
+}
+
+.sub-menu-ativo .ui-btn-text {
+	color: #fff;
+}

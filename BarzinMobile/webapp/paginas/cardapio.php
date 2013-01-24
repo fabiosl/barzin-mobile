@@ -43,11 +43,12 @@ function construir_categoria($categoria) {
      <div data-role=\"page\" id=\"categoria_".$categoria["id"]."\" data-theme=\"a\" >
     ";
 
-	echo Layout::imprimir_header($nome_bar, $nome_mesa, "Cardápio");
+	echo Layout::imprimir_header("cardapio");
 
 	
 	echo "
 		<div data-role=\"content\">
+			<h1>Cardápio</h1>
 	"; 
 
 	$navegacao = "";
@@ -71,8 +72,6 @@ function construir_categoria($categoria) {
     echo "
      	</div>
 	";
-
-	echo Layout::imprimir_footer("cardapio");
 
 	echo "
 	 </div>
@@ -153,11 +152,13 @@ function construir_item($item) {
      <div data-role=\"page\" id=\"item_".$item["id"]."\" data-theme=\"a\">
     ";
 
-	echo Layout::imprimir_header($nome_bar, $nome_mesa, "Pedir item");
+	echo Layout::imprimir_header("cardapio");
 
 	
 	echo "
 		<div data-role=\"content\">
+			<h1>Cardápio</h1>
+
 			<a href=\"#\" data-rel=\"back\" class=\"voltar\" data-transition=\"slide\">Voltar</a>
 			
 			<h2>".$item["nome"]."</h2>
@@ -252,8 +253,6 @@ function construir_item($item) {
 		</script>
     ";
 
-	echo Layout::imprimir_footer("cardapio");
-
 	echo "
 	 </div>
 	";
@@ -265,17 +264,17 @@ construir_categorias();
 
 <div data-role="page" id="cardapio" data-theme="a" >
 	
-	<?php echo Layout::imprimir_header($nome_bar, $nome_mesa, "Cardápio"); ?>
+	<?php echo Layout::imprimir_header("cardapio"); ?>
 
 	<div data-role="content">
+
+		<h1>Cardápio</h1>
 
 		<?php
 		imprimir_categoria($cardapio, true);
 		?>
 
     </div>
-
-    <?php echo Layout::imprimir_footer("cardapio"); ?>
 	
 </div>
 
