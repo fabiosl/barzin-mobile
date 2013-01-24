@@ -28,6 +28,7 @@ $cardapio = Sessao::get("cardapio");
 		<script src="javascript/jquery.mobile-1.2.0.min.js"></script>
 		<script src="javascript/jquery.session.js"></script>
 		<script src="javascript/funcoes.js"></script>
+		<script src="javascript/menu_header.js"></script>
 		<script type="text/javascript">
 		var raiz_requisicao = "<?php echo Requisicoes::raiz_frontend; ?>";
 		var codigo_mesa = "<?php echo $codigo_mesa; ?>";
@@ -42,7 +43,7 @@ $cardapio = Sessao::get("cardapio");
 			atualizar_pedidos_backend(raiz_requisicao, codigo_mesa, ultima_atualizacao_pedidos);
 		}
 
-		location.hash = "#pessoas";
+		// location.hash = "#pessoas";
 		
 		var pedidos = new Array();
 		var pessoas = new Array();
@@ -63,7 +64,7 @@ $cardapio = Sessao::get("cardapio");
 
 		
 		var ultimo_chamado_garcom = 0;
-		$('.chamar_garcom').live('click', function() {
+		$('.chamar_garcom').live('click', function(event) {			
 			var agora = new Date().getTime() / 1000;
 
 			if (agora - ultimo_chamado_garcom > 5 * 60) {
@@ -81,18 +82,72 @@ $cardapio = Sessao::get("cardapio");
 								alert('Chamado ao garçom realizado.');
 								ultimo_chamado_garcom = agora;
 							}
+							$('.sub_menu_outros').hide();
+							limpar_header($(this).closest('div[data-role=page]').attr('id'));
 						}, 
 						'json'
 					);
+				} 
+				else {
+					$('.sub_menu_outros').hide();
+					limpar_header($(this).closest('div[data-role=page]').attr('id'));
 				}
 			}
 			else {
 				alert('Aguarde um pouco para fazer um novo chamado ao garçom.');
+				$('.sub_menu_outros').hide();
+				limpar_header($(this).closest('div[data-role=page]').attr('id'));
 			}
+			
+		});
+
+		var ultima_solicitacao_conta = 0;
+		$('.pedir_conta').live('click', function(event) {			
+			var agora = new Date().getTime() / 1000;
+
+			if (agora - ultima_solicitacao_conta > 5 * 60) {
+				if (confirm("Deseja realmente solicitar a conta para o garçom?")) {
+					$.post(
+						raiz_requisicao + 'garcom/solicitar_conta.php', 
+						{
+							'codigo_mesa': codigo_mesa
+						}, 
+						function(retorno) {
+							if (retorno.hasOwnProperty('erro')) {
+								alert(retorno.erro);
+							}
+							else if (retorno.hasOwnProperty('id')) {
+								alert('Solicitação de conta realizada.');
+								ultima_solicitacao_conta = agora;
+							}
+							$('.sub_menu_outros').hide();
+							limpar_header($(this).closest('div[data-role=page]').attr('id'));
+						}, 
+						'json'
+					);
+				} 
+				else {
+					$('.sub_menu_outros').hide();
+					limpar_header($(this).closest('div[data-role=page]').attr('id'));
+				}
+			}
+			else {
+				alert('Aguarde um pouco para fazer uma nova solicitação de conta');
+				$('.sub_menu_outros').hide();
+				limpar_header($(this).closest('div[data-role=page]').attr('id'));
+			}
+			
 		});
 
 		$('.sair').live('click', function() {
-			return confirm('Tem certeza que deseja sair do sistema? Seus pedidos e suas informações NÃO serão apagadas.');
+			if (confirm('Tem certeza que deseja sair do sistema? Seus pedidos e suas informações NÃO serão apagadas.')) {
+				return true;
+			}
+			else {
+				$('.sub_menu_outros').hide();
+				limpar_header($(this).closest('div[data-role=page]').attr('id'));	
+				return false;
+			}
 		});
 						
 		</script>
@@ -104,6 +159,8 @@ $cardapio = Sessao::get("cardapio");
         <?php include "paginas/pessoas.php"; ?>
 
         <?php include "paginas/conta.php"; ?>
+
+        <?php include "paginas/pendentes.php"; ?>
 
 	</body>
 </html>
