@@ -32,6 +32,11 @@
   * Recebe: codigo_mesa
   * JSON da solicitação, ou JSON de erro
 
+= mensagens/nova_mensagem.php =
+
+  * Recebe: codigo_mesa, mensagem
+  * Retorna: JSON de erro ou JSON da mensagem
+
 = mensagens/recuperar_mensagens.php =
 
   * Recebe: codigo_mesa, ultima_hora_mensagem
