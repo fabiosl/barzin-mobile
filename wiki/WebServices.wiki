@@ -42,11 +42,6 @@
   * Recebe: codigo_mesa, id_bar
   * Retorna: JSON de erro ou JSON contendo mesa, nome_bar e cardapio
 
-= pedidos/alterar_pedido.php = 
-
-  * Recebe: pedido_id, pessoas`[]` (Pessoas tem que ser um array de ID de pessoas. Pra passar um array, é só colocar vários parametros com o mesmo nome, assim: pessoas`[]`)
-  * Retorna: JSON do pedido ou JSON de erro
-
 = pedidos/novo_pedido.php = 
 
   * Recebe: item_id, quantidade, comentario, pessoas`[]` (Pessoas tem que ser um array de ID de pessoas. Pra passar um array, é só colocar vários parametros com o mesmo nome, assim: pessoas`[]`)
