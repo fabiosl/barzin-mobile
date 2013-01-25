@@ -31,6 +31,7 @@ if (intval($ultima_atualizacao_pedidos) < $ultima_atualizacao_banco) {
 									"id" => $pedido->get_id(), 
 									"item" => $item->get_nome(), 
 									"preco_item" => $item->get_preco(),
+									"id_item" => $item->get_id(),
 									"estado" => $pedido->get_estado(), 
 									"quantidade" => $pedido->get_quantidade(), 
 									"pessoas" => $pessoas, 
