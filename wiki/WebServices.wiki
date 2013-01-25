@@ -32,15 +32,15 @@
   * Recebe: codigo_mesa
   * JSON da solicitação, ou JSON de erro
 
+= mensagens/recuperar_mensagens.php =
+
+  * Recebe: codigo_mesa, ultima_hora_mensagem
+  * Retorna: JSON de erro ou JSON contendo array de mensagens e ultima_hora_mensagem do banco
+
 = mesas/conectar_a_mesa.php =
 
   * Recebe: codigo_mesa, id_bar
   * Retorna: JSON de erro ou JSON contendo mesa, nome_bar e cardapio
-
-= mesas/recuperar_mensagens.php =
-
-  * Recebe: codigo_mesa, ultima_hora_mensagem
-  * Retorna: JSON de erro ou JSON contendo array de mensagens e ultima_hora_mensagem do banco
 
 = pedidos/alterar_pedido.php = 
 
