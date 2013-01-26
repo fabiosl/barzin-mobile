@@ -1,9 +1,8 @@
 <div data-role="page" id="conta" data-theme="a" >
 	
-	<?php echo Layout::imprimir_header("conta"); ?>
+	<?php echo Layout::imprimir_header("Conta", $nome_mesa, $nome_bar, $codigo_mesa); ?>
 
 	<div data-role="content">
-		<h1>Conta</h1>
 
 		<input type="hidden" id="ultima_atualizacao_pedidos" value="0" />
 
@@ -23,9 +22,24 @@
 
 		<h2>
 			Total: 
-			<span class="laranja">R$ <span id="total"></span></span>
+			<span class="laranja">R$ <span id="total"></span> <span id="valor_taxa" class="texto-pequeno" style="color: #777777;"></span></span>
 			<div class="texto-pequeno">(<span id="pessoas_resumo"></span>)</span>
 		</h2>
+	
+		<div style="display: none;" id="total_escondido"></div>
+
+		<div style="float: left; margin-right: 10px; margin-top: 10px;">Taxa:</div>
+		<select data-inline="true" data-mini="true" id="taxa" style="float: left; display: inline-block;">
+			<option value="0">Sem taxa</option>
+			<option value="5">5%</option>
+			<option value="10" selected="selected">10%</option>
+			<option value="15">15%</option>
+			<?php
+				for ($i = 20; $i <= 100; $i += 10) { 
+			    	echo "<option value=\"$i\">$i%</option>";
+			    }
+			?>
+		</select>
 
 		<div id="pedidos_atendidos" style="margin-top: 20px;">
 			Pedidos Atendidos
@@ -33,27 +47,11 @@
 			 	<thead>
 			    	<tr>
 				      <th>Item</th>
-				      <th>Quant.</th>
+				      <th>Qtd.</th>
 				      <th>Hora</th>
+				      <th>Estado</th>
 				      <th>Preço Unid.</th>
-				      <th>Subtotal</th>
-			    	</tr>
-			  	</thead>
-				<tbody>
-				</tbody>
-			</table>
-		</div>
-
-		<div id="pedidos_pendentes" style="margin-top: 20px;">
-			Pedidos Pendentes
-			<table data-role="table" id="lista_pedidos_pendentes" data-mode="reflow" class="tabela_pedidos_pendentes texto-pequeno">
-			 	<thead>
-			    	<tr>
-				      <th>Item</th>
-				      <th>Quant.</th>
-				      <th>Hora</th>
-				      <th>Subtotal</th>
-				      <th>Pessoas</th>
+				      <th>Valor</th>
 			    	</tr>
 			  	</thead>
 				<tbody>
@@ -62,6 +60,8 @@
 		</div>
 		
     </div>
+
+    <?php echo Layout::imprimir_footer("conta"); ?>
 	
 </div>
 
@@ -87,29 +87,33 @@ $('#conta').live("pagebeforeshow", function() {
 
 	$('#pessoas_marcar_conta').trigger('create');
 
-	atualizar_conta();
+	atualizar_conta_frontend();
 });
 
 $('#marcar_todos').click(function() {
 	$(this).siblings('fieldset').find('input[type=checkbox]').attr('checked', 'checked');
 	$('input:checkbox').checkboxradio('refresh');
 
-	atualizar_conta();
+	atualizar_conta_frontend();
 });
 
 $('#desmarcar_todos').click(function() {
 	$(this).siblings('fieldset').find('input[type=checkbox]').removeAttr('checked');
 	$('input:checkbox').checkboxradio('refresh');
 
-	atualizar_conta();
+	atualizar_conta_frontend();
 });
 
 $('.checkbox_pessoa_conta').live("change", function() {
-	atualizar_conta();
+	atualizar_conta_frontend();
 });
 
 $('#atualizar_conta').click(function() {
 	var ultima_atualizacao_pedidos = $('#ultima_atualizacao_pedidos').val();
 	atualizar_pedidos(raiz_requisicao, codigo_mesa, ultima_atualizacao_pedidos);
+});
+
+$('#taxa').live("change", function () {
+	atualizar_total_com_taxa();
 });
 </script>

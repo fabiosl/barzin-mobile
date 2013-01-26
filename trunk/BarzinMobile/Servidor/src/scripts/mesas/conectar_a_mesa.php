@@ -22,5 +22,10 @@ if (get_class($bar) == "Erro") {
 
 $cardapio = $banco->recupera_cardapio($bar);
 
-echo "{\"mesa\": ".$mesa->get_json().", \"bar\": ".$bar->get_json().", \"cardapio\": ".$cardapio->get_json()."}";
+$ultima_hora_mensagem = $banco->recupera_ultima_atualizacao_mensagens($mesa->get_id());
+if ($ultima_hora_mensagem == "") {
+	$ultima_hora_mensagem = 0;
+}
+
+echo "{\"mesa\": ".$mesa->get_json().", \"bar\": ".$bar->get_json().", \"cardapio\": ".$cardapio->get_json().", \"ultima_hora_mensagem\": $ultima_hora_mensagem}";
 ?>

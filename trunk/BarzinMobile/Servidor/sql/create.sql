@@ -126,3 +126,12 @@ CREATE TABLE solicitacoes_conta (
 
     CONSTRAINT mesa_solicitacoes_conta_fk FOREIGN KEY (mesa_id) REFERENCES mesas(id) ON DELETE CASCADE
 );
+
+CREATE TABLE mensagens (
+    id          SERIAL              PRIMARY KEY, 
+    mesa_id     BIGINT UNSIGNED     NOT NULL, 
+    data_hora   TIMESTAMP, 
+    mensagem    TEXT, 
+
+    CONSTRAINT mesa_mensagens_fk FOREIGN KEY (mesa_id) REFERENCES mesas(id) ON DELETE CASCADE
+);

@@ -15,27 +15,27 @@ table {
 }
 
 .tabela_pedidos_atendidos th {
-	background-color: #00A60E;
+	background-color: #006AE3;
 }
 
 .tabela_pedidos_atendidos tr:nth-child(even) {
-	background-color: #00750A;
+	background-color: #0050AB;
 }
 
 .tabela_pedidos_atendidos tr:nth-child(odd) {
-	background-color: #004A06;
+	background-color: #003878;
 }
 
 .tabela_pedidos_pendentes th {
-	background-color: #ff6c00;
+	background-color: #E00065;
 }
 
 .tabela_pedidos_pendentes tr:nth-child(even) {
-	background-color: #BF5100;
+	background-color: #A8004C;
 }
 
 .tabela_pedidos_pendentes tr:nth-child(odd) {
-	background-color: #873900;
+	background-color: #700032;
 }
 
 .atualizar {
@@ -87,10 +87,6 @@ table {
 	color: #ff6c00;
 }
 
-.ui-content {
-	padding-top: 20px;
-}
-
 .ativo {
 	background-image: none;
 	background-color: #179b1f;
@@ -103,4 +99,12 @@ table {
 
 .sub-menu-ativo .ui-btn-text {
 	color: #fff;
+}
+
+.ui-content {
+	padding-bottom: 40px;
+}
+
+.cancelado th, .cancelado td {
+	background-color: #ff0000;
 }

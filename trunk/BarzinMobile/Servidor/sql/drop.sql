@@ -1,3 +1,5 @@
+DROP TABLE mensagens;
+
 DROP TABLE solicitacoes_conta;
 
 DROP TABLE chamados_garcom;

@@ -123,7 +123,7 @@ if (count($pedidos_pendentes) > 0) {
 	}
 }
 
-if ($conta->get_estado() != "Fechada" && $tipo_usuario == "admin") {
+if ($conta->get_estado() != "Fechada") {
 	echo "
 	 <p align=\"center\" />
 	 <a id=\"link_fechar\" href=\"javascript: void(0);\" onclick=\"prepararFecharMesa(".$mesa->get_id().", '".$mesa->get_nome()."', ".count($pedidos_pendentes).");\">Fechar conta</a>

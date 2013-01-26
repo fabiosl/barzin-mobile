@@ -1,3 +1,5 @@
+DELETE FROM mensagens;
+
 DELETE FROM solicitacoes_conta;
 
 DELETE FROM chamados_garcom;

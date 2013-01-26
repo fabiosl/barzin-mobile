@@ -14,7 +14,12 @@ if (get_class((Object) $pedido) != "Pedido") {
 	exit;
 }
 
-if ($pedido->get_estado() != "Pendente") {
+if ($pedido->get_estado() == "Cancelamento Solicitado") {
+	$erro = new Erro("Uma solicitação de cancelamento para esse pedido já foi feita.");
+	echo $erro->get_json();
+	exit;
+}
+elseif ($pedido->get_estado() != "Pendente") {
 	$erro = new Erro("O pedido só pode ser cancelado se estiver Pendente.");
 	echo $erro->get_json();
 	exit;

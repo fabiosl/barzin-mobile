@@ -10,15 +10,16 @@ include_once 'mesa.php';
 include_once 'pessoa.php';
 include_once 'chamado_garcom.php';
 include_once 'solicitacao_conta.php';
+include_once 'mensagem.php';
 
 class DAO {
 
     function DAO() {
     	// Online no JPRibeiro.com
-		//$host = "localhost";
-		//$usuario = "jpribeir_barzin";
-		//$senha = "b4rz1n";
-		//$db = "jpribeir_barzin";
+		// $host = "localhost";
+		// $usuario = "jpribeir_barzin";
+		// $senha = "b4rz1n";
+		// $db = "jpribeir_barzin";
     	
     	// Local
      	date_default_timezone_set ('America/Recife');
@@ -216,6 +217,26 @@ class DAO {
     										AND m.bar_id=$id_bar");
     	return mysql_num_rows($consulta);
     }
+
+    function enviar_msg_pra_mesas_abertas($id_bar, $mensagem) {
+        $id_bar = mysql_real_escape_string($id_bar);
+        $mensagem = mysql_real_escape_string($mensagem);
+
+        $consulta_mesas = mysql_query("SELECT m.id
+                                        FROM contas c, mesas m
+                                        WHERE c.estado = 'Aberta'
+                                            AND c.mesa_id = m.id
+                                            AND m.bar_id = $id_bar");
+        
+        while (list($id_mesa) = mysql_fetch_array($consulta_mesas)) {
+            $msg = new Mensagem();
+            $msg->set_mesa_id($id_mesa);
+            $msg->set_mensagem($mensagem);
+            $this->salvar_mensagem($msg);
+        }
+
+        return "ok";
+    }
     
     function excluir_categoria($categoria) {
     	$id_categoria = mysql_real_escape_string($categoria->get_id());
@@ -278,6 +299,16 @@ class DAO {
     
     }
     
+    function excluir_mensagem($id_mensagem) {
+        $id_mensagem = mysql_real_escape_string($id_mensagem);
+        $excluir = mysql_query("DELETE FROM mensagens
+                                    WHERE id = $id_mensagem");
+        if (!$excluir) {
+            return mysql_error();
+        }
+        return "ok";
+    }
+
     function excluir_mesa($mesa) {
     	$id_mesa = mysql_real_escape_string($mesa->get_id());
     	$excluir = mysql_query("DELETE FROM mesas
@@ -326,6 +357,8 @@ class DAO {
     	if (mysql_num_rows($consulta_outras_pessoas) == 0) {
     		return "É necessário ter no mínimo uma pessoa na mesa.";
     	}
+
+        // A partir daqui, pode excluir
     	
     	$excluir = mysql_query("DELETE FROM pessoas
         				    		WHERE id = $id_pessoa");
@@ -375,7 +408,7 @@ class DAO {
     												USING pedidos p, contas c
     												WHERE p.conta_id = c.id 
     													AND c.mesa_id = $id_mesa
-    													AND p.estado = 'Pendente'");
+    													AND p.estado IN ('Pendente', 'Cancelamento Solicitado')");
     	if (!$remover_pedidos_pendentes) {
     		return mysql_error();
     	}
@@ -392,6 +425,12 @@ class DAO {
             return mysql_error();
         }
     	
+        $remover_mensagens = mysql_query("DELETE FROM mensagens
+                                            WHERE mesa_id = $id_mesa");
+        if (!$remover_mensagens) {
+            return mysql_error();
+        }
+
     	$atualizar = mysql_query("UPDATE contas 
     								SET estado = 'Fechada', 
     									data_hora_fechamento = NOW() 
@@ -694,6 +733,34 @@ class DAO {
     	}
     	return new Erro("Não foi encontrado item com o ID $id_item");
     }
+
+    function recupera_mensagem($id_mensagem) {
+        $id_mensagem = mysql_real_escape_string($id_mensagem);
+        $consulta_mensagem = mysql_query("SELECT m.id, m.mesa_id, m.mensagem, UNIX_TIMESTAMP(m.data_hora) AS data_hora 
+                                                FROM mensagens m
+                                                WHERE m.id = $id_mensagem");
+        if (mysql_num_rows($consulta_mensagem)) {
+            $mensagem = new Mensagem();
+            $mensagem->setar_atributos_consulta($consulta_mensagem);
+            return $mensagem;
+        }
+        return new Erro("Não foi encontrada mensagem com o ID $id_mensagem");
+    }
+
+    function recupera_mensagens_pra_mesa_depois_de($id_mesa, $ultima_hora) {
+        $id_mesa = mysql_real_escape_string($id_mesa);
+        $ultima_hora = mysql_real_escape_string($ultima_hora);
+        $consulta_mensagens = mysql_query("SELECT m.id 
+                                                FROM mensagens m
+                                                WHERE m.mesa_id = $id_mesa
+                                                    AND UNIX_TIMESTAMP(m.data_hora) > $ultima_hora
+                                                ORDER BY m.data_hora ASC");
+        $lista_mensagens = array();
+        while (list($id_mensagem) = mysql_fetch_array($consulta_mensagens)) {
+            $lista_mensagens[] = $this->recupera_mensagem($id_mensagem);
+        }
+        return $lista_mensagens;
+    }
     
     function recupera_mesa($id_mesa) {
     	$id_mesa = mysql_real_escape_string($id_mesa);
@@ -967,6 +1034,17 @@ class DAO {
     	list($timestamp) = mysql_fetch_array($consulta);
     	return $timestamp;
     }
+
+    function recupera_ultima_atualizacao_mensagens($id_mesa) {
+        $id_mesa = mysql_real_escape_string($id_mesa);
+        $consulta = mysql_query("SELECT UNIX_TIMESTAMP(m.data_hora)
+                                    FROM mensagens m  
+                                    WHERE m.mesa_id = $id_mesa
+                                    ORDER BY m.data_hora DESC 
+                                    LIMIT 1");
+        list($timestamp) = mysql_fetch_array($consulta);
+        return $timestamp;
+    }
     
     function salvar_bar($bar) {
     	$id_bar = mysql_real_escape_string($bar->get_id());
@@ -1184,6 +1262,37 @@ class DAO {
 
 		return $this->incrementar_versao_cardapio($id_bar);
 	}
+
+    function salvar_mensagem($mensagem_obj) {
+        $id = mysql_real_escape_string($mensagem_obj->get_id());
+        $mesa_id = mysql_real_escape_string($mensagem_obj->get_mesa_id());
+        $mensagem = mysql_real_escape_string($mensagem_obj->get_mensagem());
+        $data_hora = mysql_real_escape_string($mensagem_obj->get_data_hora_mysql());
+        $consulta = mysql_query("SELECT m.id
+                                    FROM mensagens m 
+                                    WHERE m.id = $id");
+        if (mysql_num_rows($consulta) == 1) {
+            $salvar = mysql_query("UPDATE mensagens
+                                    SET mesa_id = $mesa_id,
+                                        mensagem = '$mensagem', 
+                                        data_hora = '$data_hora'
+                                    WHERE id = $id");
+        }
+        else {
+            $salvar = mysql_query("INSERT INTO mensagens (mesa_id, mensagem, data_hora) VALUES (
+                                    $mesa_id, 
+                                    '$mensagem', 
+                                    '$data_hora')");
+            $mensagem_obj->set_id(mysql_insert_id());
+        }
+    
+        if (!$salvar) {
+            $erro = new Erro(mysql_error());
+            return $erro->get_json();
+        }
+    
+        return $mensagem_obj->get_json();
+    }
 	
 	function salvar_mesa($mesa) {
 		$id_mesa = mysql_real_escape_string($mesa->get_id());

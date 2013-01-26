@@ -12,6 +12,7 @@ $nome_mesa = Sessao::get("nome_mesa");
 $nome_bar = Sessao::get("nome_bar");
 $codigo_mesa = Sessao::get("codigo_mesa");
 $cardapio = Sessao::get("cardapio");
+$ultima_msg = Sessao::get("ultima_msg");
 ?>
 
 <!DOCTYPE html>
@@ -28,10 +29,11 @@ $cardapio = Sessao::get("cardapio");
 		<script src="javascript/jquery.mobile-1.2.0.min.js"></script>
 		<script src="javascript/jquery.session.js"></script>
 		<script src="javascript/funcoes.js"></script>
-		<script src="javascript/menu_header.js"></script>
+		<script src="javascript/menu_footer.js"></script>
 		<script type="text/javascript">
 		var raiz_requisicao = "<?php echo Requisicoes::raiz_frontend; ?>";
 		var codigo_mesa = "<?php echo $codigo_mesa; ?>";
+		var ultima_msg = "<?php echo $ultima_msg; ?>";
 
 		function setar_botoes_excluir() {
 			$('.excluir_pessoa').click(function(e) {
@@ -81,6 +83,36 @@ $cardapio = Sessao::get("cardapio");
 			atualizar_pedidos_backend(raiz_requisicao, codigo_mesa, ultima_atualizacao_pedidos);
 		}
 
+		function atualizar_msg_automaticamente() {
+			$.post(
+				raiz_requisicao + "mensagens/recuperar_mensagens.php",
+				{
+					"codigo_mesa": codigo_mesa, 
+					"ultima_hora_mensagem": ultima_msg,
+					'random': Math.random()
+				}, 
+				function (retorno) {
+					if (retorno.hasOwnProperty("mensagens")) {
+						if (retorno.mensagens.length > 0) {
+							ultima_msg = retorno.ultima_hora_mensagem;
+							$.post(
+                                'sessao/setar_sessao.php',
+                                {
+                                    'ultima_msg': retorno.ultima_hora_mensagem,
+                                    'random': Math.random()
+                                }, 
+                                function () {}
+                            );
+                            $.each(retorno.mensagens, function(index, valor) {
+                            	alert(valor);
+                            });
+						}
+					}
+				}, 
+				"json"
+			);
+		}
+
 		location.hash = "#pessoas";
 		
 		var pedidos = new Array();
@@ -98,6 +130,7 @@ $cardapio = Sessao::get("cardapio");
 
 		    window.setInterval("atualizar_pessoas_automaticamente()", 10 * 60 * 1000); // de 10 em 10 minutos
 		    window.setInterval("atualizar_conta_automaticamente()", 30 * 1000); // de 30 em 30 segundos
+		    window.setInterval("atualizar_msg_automaticamente()", 30 * 1000); // de 30 em 30 segundos
 		});
 
 		
@@ -121,20 +154,20 @@ $cardapio = Sessao::get("cardapio");
 								ultimo_chamado_garcom = agora;
 							}
 							$('.sub_menu_outros').hide();
-							limpar_header($(this).closest('div[data-role=page]').attr('id'));
+							limpar_footer($(this).closest('div[data-role=page]').attr('id'));
 						}, 
 						'json'
 					);
 				} 
 				else {
 					$('.sub_menu_outros').hide();
-					limpar_header($(this).closest('div[data-role=page]').attr('id'));
+					limpar_footer($(this).closest('div[data-role=page]').attr('id'));
 				}
 			}
 			else {
 				alert('Aguarde um pouco para fazer um novo chamado ao garçom.');
 				$('.sub_menu_outros').hide();
-				limpar_header($(this).closest('div[data-role=page]').attr('id'));
+				limpar_footer($(this).closest('div[data-role=page]').attr('id'));
 			}
 			
 		});
@@ -159,20 +192,20 @@ $cardapio = Sessao::get("cardapio");
 								ultima_solicitacao_conta = agora;
 							}
 							$('.sub_menu_outros').hide();
-							limpar_header($(this).closest('div[data-role=page]').attr('id'));
+							limpar_footer($(this).closest('div[data-role=page]').attr('id'));
 						}, 
 						'json'
 					);
 				} 
 				else {
 					$('.sub_menu_outros').hide();
-					limpar_header($(this).closest('div[data-role=page]').attr('id'));
+					limpar_footer($(this).closest('div[data-role=page]').attr('id'));
 				}
 			}
 			else {
 				alert('Aguarde um pouco para fazer uma nova solicitação de conta');
 				$('.sub_menu_outros').hide();
-				limpar_header($(this).closest('div[data-role=page]').attr('id'));
+				limpar_footer($(this).closest('div[data-role=page]').attr('id'));
 			}
 			
 		});
@@ -183,11 +216,11 @@ $cardapio = Sessao::get("cardapio");
 			}
 			else {
 				$('.sub_menu_outros').hide();
-				limpar_header($(this).closest('div[data-role=page]').attr('id'));	
+				limpar_footer($(this).closest('div[data-role=page]').attr('id'));	
 				return false;
 			}
 		});
-						
+
 		</script>
 	</head>
 	<body>

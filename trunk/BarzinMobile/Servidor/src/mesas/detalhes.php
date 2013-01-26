@@ -80,9 +80,26 @@ if ($pode_alterar) {
 	";
 }
 echo "
- <br/>Código: ".$mesa->get_codigo()."
- <br/><br/>
- Contas registradas nessa mesa:<br/>
+ <br/>
+ Código: ".$mesa->get_codigo()."
+ <br/>
+";
+
+$conta_aberta = $banco->recupera_conta_aberta($mesa->get_id());
+
+if ($conta_aberta && $tipo_usuario == "admin") {
+	echo "
+	 <h2>Mensagem</h2>
+	 Preencha abaixo para enviar uma mensagem para todas as pessoas dessa mesa (no mínimo 3 caracteres):
+	 <p/>
+	 <textarea maxlength=\"100\" id=\"mensagem\" style=\"width: 500px;\"></textarea><br/>
+	 <button type=\"button\" id=\"botao_mensagem\" disabled=\"disabled\">Enviar</button>
+	 <br/>
+	";
+}
+echo "
+ <br/>
+ <h2>Contas registradas nessa mesa:</h2>
  <table border=\"1\" cellpadding=\"5\">
  	<tr bgcolor=\"#f0f0f0\">
  		<th>Estado</th>
@@ -92,7 +109,6 @@ echo "
  	</tr>
 ";
 
-$conta_aberta = $banco->recupera_conta_aberta($mesa->get_id());
 $contas_fechadas = $banco->recupera_contas_fechadas($mesa->get_id());
 
 if ($conta_aberta || count($contas_fechadas) > 0) {
@@ -136,6 +152,41 @@ echo "
 ";
 ?>
 
+<script type="text/javascript">
+$('#mensagem').live("keyup", function () {
+	if ($(this).val().length >= 3) {
+		$('#botao_mensagem').removeAttr('disabled');
+	}
+	else {
+		$('#botao_mensagem').attr('disabled', true);
+	}
+});
+
+$('#botao_mensagem').live("click", function () {
+	var texto_botao_anterior = $(this).text();
+	$(this).attr('disabled', true);
+	$(this).text("Enviando...");
+	var elemento = $(this);
+	$.post(
+		"../scripts/mensagens/enviar_msg_pra_mesa.php", 
+		{
+			"id_mesa": <?php echo $mesa->get_id(); ?>, 
+			"mensagem": $('#mensagem').val()
+		}, 
+		function (retorno) {
+			if (retorno.hasOwnProperty("erro")) {
+				alert("Erro: " + retorno.erro);
+			}
+			else {
+				alert("Mensagem enviada com sucesso.");
+			}
+			$(elemento).text(texto_botao_anterior);
+			$('#mensagem').val('');
+		}, 
+		"json"
+	);
+});
+</script>
 
 <?php
 $design->imprimir_fim();
