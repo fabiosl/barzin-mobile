@@ -223,7 +223,7 @@ echo "
 				$.post(
 					'scripts/pedidos/negar_cancelamento.php', 
 					{pedido_id: $(this).children('div').text()},
-					function() {
+					function(retorno) {
 						window.location.reload();
 					} 
 				);
@@ -258,6 +258,47 @@ echo "
 		});
 	</script>
 ";
+
+$cancelamentos_solicitados = $banco->recupera_pedidos_com_cancelamento_solicitado($bar->get_id());
+
+if (count($cancelamentos_solicitados) > 0) {
+	echo "<h1>Cancelamentos Soliticados</h1>";
+	echo "<table border=\"1\">";
+	$contador = 3;
+	foreach ($cancelamentos_solicitados as $pedido) {
+		if ($contador == 3) {
+			echo "<tr valign=\"top\">";
+			$contador = 0;
+		}
+		$contador++;
+		$item = $banco->recupera_item($pedido->get_item_id());
+		$mesa = $banco->recupera_mesa_pela_conta($pedido->get_conta_id());
+		echo "
+		 <td width=\"33%\" align=\"center\" valign=\"middle\" style=\"color: #ffffff; background-color: #000000;\" class=\"bloco\">
+			 <b><font size=\"+2\">$mesa</font></b><br/>
+			 Item: <b>".$item->get_nome()."</b><br/>
+			 Quantidade: <b>".$pedido->get_quantidade()."</b><br/>
+			 <span class=\"quanto_tempo\"><b>Agora</b></span><br/>
+		";
+		if ($pedido->get_comentario() != "") {
+			echo "Comentário: <b>".$pedido->get_comentario()."</b><br/>";
+		}
+		echo "
+			 <div style=\"display: none;\" class=\"data_hora\">".$pedido->get_data_hora_solicitacao_cancelamento()."</div>
+			 <button type=\"button\" class=\"confirmar_cancelamento\"><font color=\"#009240\">Confirmar Cancelamento</font><div style=\"display: none\">".$pedido->get_id()."</div></button>
+			 <button type=\"button\" class=\"negar_cancelamento\"><font color=\"#ff0000\">Negar Cancelamento</font><div style=\"display: none\">".$pedido->get_id()."</div></button>
+		 </td>
+		";
+		if ($contador == 3) {
+			echo "</tr>";
+		}
+	}
+	while ($contador < 3) {
+	echo "<td width=\"33%\"></td>";
+			$contador++;
+	}
+	echo "</tr></table>";
+}
 
 $solicitacoes_conta = $banco->recupera_solicitacoes_conta($bar->get_id());
 
@@ -322,47 +363,6 @@ if (count($chamados) > 0) {
 		$contador++;
 	}
 	echo "</tr></table>";
-}
-
-$cancelamentos_solicitados = $banco->recupera_pedidos_com_cancelamento_solicitado($bar->get_id());
-
-if (count($cancelamentos_solicitados) > 0) {
-	echo "<h1>Cancelamentos Soliticados</h1>";
-	echo "<table border=\"1\">";
-	$contador = 3;
-	foreach ($cancelamentos_solicitados as $pedido) {
-		if ($contador == 3) {
-			echo "<tr valign=\"top\">";
-			$contador = 0;
-		}
-		$contador++;
-		$item = $banco->recupera_item($pedido->get_item_id());
-		$mesa = $banco->recupera_mesa_pela_conta($pedido->get_conta_id());
-		echo "
-				 <td width=\"33%\" align=\"center\" valign=\"middle\" style=\"color: #ffffff; background-color: #000000;\" class=\"bloco\">
-					 <b><font size=\"+2\">$mesa</font></b><br/>
-					 Item: <b>".$item->get_nome()."</b><br/>
-					 Quantidade: <b>".$pedido->get_quantidade()."</b><br/>
-					 <span class=\"quanto_tempo\"><b>Agora</b></span><br/>
-				";
-		if ($pedido->get_comentario() != "") {
-		echo "Comentário: <b>".$pedido->get_comentario()."</b><br/>";
-		}
-		echo "
-					 <div style=\"display: none;\" class=\"data_hora\">".$pedido->get_data_hora_solicitacao_cancelamento()."</div>
-					 <button type=\"button\" class=\"confirmar_cancelamento\"><font color=\"#009240\">Confirmar Cancelamento</font><div style=\"display: none\">".$pedido->get_id()."</div></button>
-					 <button type=\"button\" class=\"negar_cancelamento\"><font color=\"#ff0000\">Negar Cancelamento</font><div style=\"display: none\">".$pedido->get_id()."</div></button>
-				 </td>
-				";
-		if ($contador == 3) {
-		echo "</tr>";
-				}
-		}
-		while ($contador < 3) {
-		echo "<td width=\"33%\"></td>";
-				$contador++;
-		}
-		echo "</tr></table>";
 }
 
 echo "<h1>Controle de Pedidos</h1>";

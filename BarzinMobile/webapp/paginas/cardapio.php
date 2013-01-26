@@ -37,18 +37,16 @@ function construir_categorias() {
 }
 
 function construir_categoria($categoria) {
-	global $nome_bar, $nome_mesa, $categorias_maes;
+	global $nome_bar, $nome_mesa, $categorias_maes, $codigo_mesa;
 	
 	echo "
      <div data-role=\"page\" id=\"categoria_".$categoria["id"]."\" data-theme=\"a\" >
     ";
 
-	echo Layout::imprimir_header("cardapio");
-
+	echo Layout::imprimir_header("Cardápio", $nome_mesa, $nome_bar, $codigo_mesa);
 	
 	echo "
 		<div data-role=\"content\">
-			<h1>Cardápio</h1>
 	"; 
 
 	$navegacao = "";
@@ -73,6 +71,8 @@ function construir_categoria($categoria) {
      	</div>
 	";
 
+	echo Layout::imprimir_footer("cardapio");
+
 	echo "
 	 </div>
 	";
@@ -88,6 +88,7 @@ function construir_categoria($categoria) {
     		construir_item($item);
     	}
     }
+
 }
 
 function imprimir_categoria($categoria_mae, $eh_cardapio = false) {
@@ -146,18 +147,16 @@ function imprimir_categoria($categoria_mae, $eh_cardapio = false) {
 }
 
 function construir_item($item) {
-	global $nome_bar, $nome_mesa, $categorias_maes;
+	global $nome_bar, $nome_mesa, $categorias_maes, $codigo_mesa;
 	
 	echo "
      <div data-role=\"page\" id=\"item_".$item["id"]."\" data-theme=\"a\">
     ";
 
-	echo Layout::imprimir_header("cardapio");
-
+	echo Layout::imprimir_header("Cardápio", $nome_mesa, $nome_bar, $codigo_mesa);
 	
 	echo "
 		<div data-role=\"content\">
-			<h1>Cardápio</h1>
 
 			<a href=\"#\" data-rel=\"back\" class=\"voltar\" data-transition=\"slide\">Voltar</a>
 			
@@ -206,7 +205,7 @@ function construir_item($item) {
         	</div>
 
         	<label>Comentário</label>
-        	<textarea class=\"comentario\" placeholder=\"Comentário opcional\" data-mini=\"true\"></textarea>
+        	<textarea class=\"comentario\" placeholder=\"Comentário opcional\" data-mini=\"true\" maxlength=\"70\"></textarea>
 
         	<span class=\"preco_item\" style=\"display: none;\">".$item["preco"]."</span>
         	<span class=\"id_item\" style=\"display: none;\">".$item["id"]."</span>
@@ -253,6 +252,8 @@ function construir_item($item) {
 		</script>
     ";
 
+    echo Layout::imprimir_footer("cardapio");
+
 	echo "
 	 </div>
 	";
@@ -264,17 +265,17 @@ construir_categorias();
 
 <div data-role="page" id="cardapio" data-theme="a" >
 	
-	<?php echo Layout::imprimir_header("cardapio"); ?>
+	<?php echo Layout::imprimir_header("Cardápio", $nome_mesa, $nome_bar, $codigo_mesa); ?>
 
 	<div data-role="content">
-
-		<h1>Cardápio</h1>
 
 		<?php
 		imprimir_categoria($cardapio, true);
 		?>
 
     </div>
+
+    <?php echo Layout::imprimir_footer("cardapio"); ?>
 	
 </div>
 
@@ -335,7 +336,7 @@ construir_categorias();
 						var ultima_atualizacao_pedidos = $('#ultima_atualizacao_pedidos').val();
 						atualizar_pedidos(raiz_requisicao, codigo_mesa, ultima_atualizacao_pedidos);
 
-						location.hash = "#conta";
+						location.hash = "#pendentes";
 					}
 				}, 
 				'json'

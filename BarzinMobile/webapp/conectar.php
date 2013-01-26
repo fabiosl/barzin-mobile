@@ -50,7 +50,7 @@
                         <label for="codigo_mesa" style="white-space: nowrap;">
                             Código da Mesa:
                         </label><br/>
-                        <input name="" id="codigo_mesa" placeholder="" value="" type="tel" style="text-align: center;"/>
+                        <input name="" id="codigo_mesa" placeholder="" value="" type="tel" style="text-align: center;" maxlength="10"/>
                     </fieldset>
                 </div>
                 <a data-role="button" href="#" data-icon="arrow-r" data-iconpos="right" data-theme="b" id="botao_conectar">
@@ -93,6 +93,7 @@
                                             'nome_mesa': retorno.mesa.nome, 
                                             'nome_bar': retorno.bar.nome, 
                                             'cardapio': retorno.cardapio,
+                                            'ultima_msg': retorno.ultima_hora_mensagem,
                                             'random': Math.random()
                                         },
                                         function(retornoSessao) {

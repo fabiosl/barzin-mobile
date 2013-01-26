@@ -27,6 +27,9 @@ if (intval($ultima_atualizacao_pedidos) < $ultima_atualizacao_banco) {
 							"id" => $pessoa->get_id(), 
 							"nome" => $pessoa->get_nome());
 		}
+
+		$cancelamento_solicitado = $pedido->get_data_hora_solicitacao_cancelamento() != "0";
+
 		$retorno["pedidos"][] = array(
 									"id" => $pedido->get_id(), 
 									"item" => $item->get_nome(), 
@@ -35,7 +38,8 @@ if (intval($ultima_atualizacao_pedidos) < $ultima_atualizacao_banco) {
 									"estado" => $pedido->get_estado(), 
 									"quantidade" => $pedido->get_quantidade(), 
 									"pessoas" => $pessoas, 
-									"hora" => $pedido->get_hora());
+									"hora" => $pedido->get_hora(), 
+									"cancelamento_solicitado" => $cancelamento_solicitado);
 	}
 	$retorno["ultima_atualizacao_pedidos"] = $ultima_atualizacao_banco;
 	echo json_encode($retorno);

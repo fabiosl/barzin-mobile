@@ -113,7 +113,8 @@ function atualizar_pedidos_backend(raiz_requisicao, codigo_mesa, ultima_atualiza
 			}
 			else if (retorno.hasOwnProperty("pedidos")) {
 				pedidos = retorno.pedidos;
-    			atualizar_conta();
+				atualizar_conta_frontend();
+				atualizar_pendentes_frontend(raiz_requisicao);
 	        	$('#ultima_atualizacao_pedidos').val(retorno.ultima_atualizacao_pedidos);
 			}
 		}, 
@@ -121,44 +122,15 @@ function atualizar_pedidos_backend(raiz_requisicao, codigo_mesa, ultima_atualiza
 	);
 }
 
-function atualizar_conta() {
-	var num_selecionados = "";
-	var texto_pessoas = "";
-	var num_pessoas_na_mesa = $('#pessoas_marcar_conta').children().size();
+function atualizar_conta_frontend() {
+	var pessoas = $('#pessoas_marcar_conta');
+	var pessoas_resumo = $('#pessoas_resumo');
+	var elemento_num_selecionados = $('#num_selecionados');
+	atualizar_informacoes_pessoas_conta(pessoas, pessoas_resumo, elemento_num_selecionados);
 
-	var pessoas_selecionadas = $('#pessoas_marcar_conta').find('input:checkbox:checked');
-
-	if (pessoas_selecionadas.length == num_pessoas_na_mesa) {
-		texto_pessoas = "Todas as pessoas";
-		num_selecionados = "Todos selecionados";
-	}
-	else if (pessoas_selecionadas.length == 0) {
-		texto_pessoas = "Ninguém";
-		num_selecionados = "Nenhum selecionado";
-	}
-	else {
-		if (pessoas_selecionadas.length == 1) {
-			num_selecionados = "1 selecionado";
-		}
-		else {
-			num_selecionados = pessoas_selecionadas.length + " selecionados";
-		}
-		pessoas_selecionadas.each(function(index, elemento) {
-			texto_pessoas = texto_pessoas + trim($(elemento).parent().text());
-			if (index < pessoas_selecionadas.length - 2) {
-				texto_pessoas = texto_pessoas + ", ";
-			}
-			else if (index == pessoas_selecionadas.length - 2) {
-				texto_pessoas = texto_pessoas + " e ";
-			}
-		});
-	}
-
-	$('#pessoas_resumo').text(texto_pessoas);
-	$('#num_selecionados').text(num_selecionados);
+	var pessoas_selecionadas = pessoas.find('input:checkbox:checked');
 
 	var pedidos_filtrados = [];
-	var pedidos_pendentes = [];
 
 	for (var i = 0; i < pedidos.length; i++) {
 		var pedido = pedidos[i];
@@ -168,24 +140,17 @@ function atualizar_conta() {
 			for (var k = 0; k < pessoas_selecionadas.length; k++) {
 				if ($(pessoas_selecionadas[k]).val() == pessoa_pedido.id) {
 					var id = pedido.id + "";
-					if (pedido.estado == "Atendido") {
+					if (pedido.estado == "Atendido" || pedido.estado == "Cancelado") {
 						if (indice_elemento_com_id_no_array(id, pedidos_filtrados) == -1) {
 							var array = [];
 							array["id"] = id;
 							array["pedido"] = pedido;
 							array["quantidade"] = 0;
+							array["estado"] = pedido.estado;
 							pedidos_filtrados.push(array);
 						}
 						var indice = indice_elemento_com_id_no_array(id, pedidos_filtrados);
 						pedidos_filtrados[indice]["quantidade"] += quantidade_por_pessoa;
-					}
-					else if (pedido.estado == "Pendente") {
-						if (indice_elemento_com_id_no_array(id, pedidos_pendentes) == -1) {
-							var array = [];
-							array["id"] = id;
-							array["pedido"] = pedido;
-							pedidos_pendentes.push(array);
-						}
 					}
 				}
 			}
@@ -215,20 +180,89 @@ function atualizar_conta() {
 
 		var parcela = parseFloat(pedido_filtrado["quantidade"]) * parseFloat(pedido_filtrado["pedido"].preco_item)
 
-		total += parcela;
-		
-    	$('#lista_pedidos_atendidos').children('tbody').append('' + 
-															'<tr>' +
-																'<td>' + pedido_filtrado["pedido"].item + '</td>' + 
-																'<td align="center">' + quantidade + '</td>' + 
-																'<td align="center">' + pedido_filtrado["pedido"].hora + '</td>' + 
-																'<td align="center" nowrap>R$ ' + parseFloat(pedido_filtrado["pedido"].preco_item).toFixed(2) + '</td>' + 
-																'<td align="center" nowrap>R$ ' + parcela.toFixed(2) + '</td>' + 
-															'</tr>');
+		var ultimoDoisPontos = pedido_filtrado["pedido"].hora.lastIndexOf(":")
+		var hora = pedido_filtrado["pedido"].hora.substring(0, ultimoDoisPontos);
+
+		if (pedido_filtrado["estado"] == 'Atendido') {
+			total += parcela;
+			$('#lista_pedidos_atendidos').children('tbody').append('' + 
+																	'<tr>' +
+																		'<td>' + pedido_filtrado["pedido"].item + '</td>' + 
+																		'<td align="center">' + quantidade + '</td>' + 
+																		'<td align="center">' + hora + '</td>' + 
+																		'<td align="center">' + pedido_filtrado["pedido"].estado + '</td>' + 
+																		'<td align="center" nowrap>R$ ' + parseFloat(pedido_filtrado["pedido"].preco_item).toFixed(2) + '</td>' + 
+																		'<td align="center" nowrap>R$ ' + parcela.toFixed(2) + '</td>' + 
+																	'</tr>');
+		}
+		else {
+			$('#lista_pedidos_atendidos').children('tbody').append('' + 
+																	'<tr class="cancelado">' +
+																		'<td>' + pedido_filtrado["pedido"].item + '</td>' + 
+																		'<td align="center">-</td>' + 
+																		'<td align="center">' + hora + '</td>' + 
+																		'<td align="center">' + pedido_filtrado["pedido"].estado + '</td>' + 
+																		'<td align="center" nowrap>-</td>' + 
+																		'<td align="center" nowrap>-</td>' + 
+																	'</tr>');
+		}
+
+    	
     	$('#lista_pedidos_atendidos').trigger('create');
+	}						
+
+	$('#total_escondido').text(total);
+	atualizar_total_com_taxa();
+}
+
+function atualizar_total_com_taxa() {
+	var total = parseInt($('#total_escondido').text(), 10);
+
+	var valor_taxa = $('#taxa').val() / 100 * total;
+	if (valor_taxa > 0) {
+		$('#valor_taxa').text('(R$ ' + valor_taxa.toFixed(2) + ' de taxa)');
+	}
+	else {
+		$('#valor_taxa').text('');
 	}
 
-	$('#lista_pedidos_pendentes').children('tbody').empty();
+	$('#total').text((total + valor_taxa).toFixed(2));
+}
+
+function atualizar_pendentes_frontend(raiz_requisicao) {
+	var pessoas = $('#pessoas_marcar_pendentes');
+	var pessoas_resumo = $('#pessoas_resumo_pendentes');
+	var elemento_num_selecionados = $('#num_selecionados_pendentes');
+	atualizar_informacoes_pessoas_conta(pessoas, pessoas_resumo, elemento_num_selecionados);
+
+	var pessoas_selecionadas = pessoas.find('input:checkbox:checked');
+
+	var pedidos_pendentes = [];
+
+	for (var i = 0; i < pedidos.length; i++) {
+		var pedido = pedidos[i];
+		var quantidade_por_pessoa = parseInt(pedido.quantidade) / pedido.pessoas.length;
+		for (var j = 0; j < pedido.pessoas.length; j++) {
+			pessoa_pedido = pedido.pessoas[j];
+			for (var k = 0; k < pessoas_selecionadas.length; k++) {
+				if ($(pessoas_selecionadas[k]).val() == pessoa_pedido.id) {
+					var id = pedido.id + "";
+					if (pedido.estado == "Pendente" || pedido.estado == "Cancelamento Solicitado") {
+						if (indice_elemento_com_id_no_array(id, pedidos_pendentes) == -1) {
+							var array = [];
+							array["id"] = id;
+							array["pedido"] = pedido;
+							pedidos_pendentes.push(array);
+						}
+					}
+				}
+			}
+		}
+	};
+
+	var total = 0;
+
+	$('#lista_pedidos_pendentes').empty();
 
 	if (pedidos_pendentes.length == 0) {
 		$('#pedidos_pendentes').hide();
@@ -240,30 +274,80 @@ function atualizar_conta() {
 	for (var indice in pedidos_pendentes) {
 		var pedido = pedidos_pendentes[indice]["pedido"];
 
-		var pessoas = "";
+		valor = parseFloat(pedido.preco_item) * parseInt(pedido.quantidade)
+
+		total += valor
+
+		var ultimoDoisPontos = pedido.hora.lastIndexOf(":")
+		var hora = pedido.hora.substring(0, ultimoDoisPontos);
+
+		var texto_pessoas = "";
 		for (var i = 0; i < pedido.pessoas.length; i++) {
-			if (i != 0) {
-				pessoas += '<br/>';
+			texto_pessoas = texto_pessoas + trim(pedido.pessoas[i].nome);
+			if (i < pedido.pessoas.length - 2) {
+				texto_pessoas = texto_pessoas + ", ";
 			}
-			pessoas += (i + 1) + ". " + pedido.pessoas[i].nome;
-		};
-		$('#lista_pedidos_pendentes').children('tbody').append('' + 
-															'<tr>' + 
-																'<td>' + pedido.item + '</td>' + 
-																'<td align="center">' + pedido.quantidade + '</td>' + 
-																'<td align="center">' + pedido.hora + '</td>' + 
-																'<td align="center" nowrap>R$ ' + (parseFloat(pedido.preco_item) * parseInt(pedido.quantidade)).toFixed(2) + '</td>' + 
-																'<td>' + pessoas + '</td>' + 
-															'</tr>');
-		$('#lista_pedidos_pendentes').trigger('create');
+			else if (i == pedido.pessoas.length - 2) {
+				texto_pessoas = texto_pessoas + " e ";
+			}
+		}
+
+		var adicionar_classe = "";
+		if (pedido.cancelamento_solicitado) {
+			adicionar_classe = "ui-disabled";
+		}
+		
+		$('#lista_pedidos_pendentes').append('' + 
+												'<li data-icon="delete">' + 
+													'<a href="#">' + 
+														'<img src="' + raiz_requisicao + 'cardapio/recuperar_thumb_item.php?id_item=' + pedido.id_item + '"/>' + 
+														'<div style="white-space: normal;">' + pedido.item + '</div>' + 
+														'<div class=\"texto-pequeno\">' + pedido.quantidade + ' p/ ' + texto_pessoas + '</div>' + 
+														'<div class=\"texto-pequeno\">Pedido às ' + hora + '</div>' + 
+														'<div class=\"preco\">R$ ' + valor.toFixed(2) + '</div>' + 
+													'</a>' + 
+													'<a href="#" data-theme="d" data-id="' + pedido.id + '" data-pessoas="' + texto_pessoas + '" data-item="' + pedido.item + '" data-quantidade="' + pedido.quantidade + '" class="cancelar_pedido_pendente ' + adicionar_classe + '"></a>' + 
+												'</li>');
+		$('#lista_pedidos_pendentes').listview('refresh');
 	}
 						
 
-	$('#total').text(total.toFixed(2));
-
+	$('#total_pendentes').text(total.toFixed(2));
 }
 
-function limpar_header(id_pagina) {
+function atualizar_informacoes_pessoas_conta(pessoas, pessoas_resumo, elemento_num_selecionados) {
+	var num_selecionados = "";
+	var texto_pessoas = "";
+	var num_pessoas_na_mesa = pessoas.children().size();
+	var pessoas_selecionadas = pessoas.find('input:checkbox:checked');
+
+	if (pessoas_selecionadas.length == num_pessoas_na_mesa) {
+		texto_pessoas = "Todas as pessoas";
+		num_selecionados = "Todos";
+	}
+	else if (pessoas_selecionadas.length == 0) {
+		texto_pessoas = "Ninguém";
+		num_selecionados = "Ninguém";
+	}
+	else {
+		num_selecionados = pessoas_selecionadas.length + " sel.";
+		
+		pessoas_selecionadas.each(function(index, elemento) {
+			texto_pessoas = texto_pessoas + trim($(elemento).parent().text());
+			if (index < pessoas_selecionadas.length - 2) {
+				texto_pessoas = texto_pessoas + ", ";
+			}
+			else if (index == pessoas_selecionadas.length - 2) {
+				texto_pessoas = texto_pessoas + " e ";
+			}
+		});
+	}
+
+	pessoas_resumo.text(texto_pessoas);
+	elemento_num_selecionados.text(num_selecionados);
+}
+
+function limpar_footer(id_pagina) {
 	if (jQuery.inArray(id_pagina, ["cardapio", "pessoas", "conta", "pendentes"]) == -1) {
 		id_pagina = "cardapio";
 	}
@@ -272,11 +356,11 @@ function limpar_header(id_pagina) {
 		id_pagina = "conta";
 	}
 
-	// <id_pagina>: [<botao_no_header_pra_limpar>, <sub_menus_pra_esconder>]
+	// <id_pagina>: [<botao_no_footer_pra_limpar>, <sub_menus_pra_esconder>]
 	hash = {
-		"cardapio": [".botao_pessoas_header, .botao_conta_header, .botao_outros_header", ".sub_menu_conta, .sub_menu_outros"], 
-		"pessoas": [".botao_cardapio_header, .botao_conta_header, .botao_outros_header", ".sub_menu_conta, .sub_menu_outros"], 
-		"conta": [".botao_pessoas_header, .botao_cardapio_header, .botao_outros_header", ".sub_menu_outros"]
+		"cardapio": [".botao_pessoas_footer, .botao_conta_footer, .botao_outros_footer", ".sub_menu_conta, .sub_menu_outros"], 
+		"pessoas": [".botao_cardapio_footer, .botao_conta_footer, .botao_outros_footer", ".sub_menu_conta, .sub_menu_outros"], 
+		"conta": [".botao_pessoas_footer, .botao_cardapio_footer, .botao_outros_footer", ".sub_menu_conta, .sub_menu_outros"]
 	}
 
 	// Limpar submenu
@@ -287,9 +371,27 @@ function limpar_header(id_pagina) {
 }
 
 $('#conta, #pessoas, #cardapio, #pendentes').live("pagebeforeshow", function() {
-	limpar_header($(this).attr('id'));
+	limpar_footer($(this).attr('id'));
 });
 
 $(function() {
-	limpar_header("cardapio");
+	limpar_footer("cardapio");
+
+	$('textarea[maxlength]').keyup(function(){  
+	    //get the limit from maxlength attribute  
+	    var limit = parseInt($(this).attr('maxlength'));  
+	    //get the current text inside the textarea  
+	    var text = $(this).val();  
+	    //count the number of characters in the text  
+	    var chars = text.length;  
+
+	    //check if there are more characters then allowed  
+	    if(chars > limit){  
+	        //and if there are use substr to get the text before the limit  
+	        var new_text = text.substr(0, limit);  
+
+	        //and change the current text with the new text  
+	        $(this).val(new_text);  
+	    }  
+	});  
 });

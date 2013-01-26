@@ -1,10 +1,10 @@
 <?php 
 class Requisicoes {
 	// Online no JPRibeiro.com
-	const raiz_backend = "http://jpribeiro.com/barzin/scripts/", raiz_frontend = "http://jpribeiro.com/barzin/scripts/";
+	// const raiz_backend = "http://jpribeiro.com/barzin/scripts/", raiz_frontend = "http://jpribeiro.com/barzin/scripts/";
 	
 	// Local
-	// const raiz_backend = "http://192.168.1.7/barzin-mobile-web/src/scripts/", raiz_frontend = "http://192.168.1.7/barzin-mobile-web/src/scripts/";
+	const raiz_backend = "http://192.168.1.2:8888/Barzin/BarzinMobile/Servidor/src/scripts/", raiz_frontend = "http://192.168.1.2:8888/Barzin/BarzinMobile/Servidor/src/scripts/";
 	
 	public static function fazer_requisicao($endereco, $dados = array()) {
 		$ch = curl_init();

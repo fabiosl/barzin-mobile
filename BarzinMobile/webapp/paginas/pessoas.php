@@ -1,11 +1,8 @@
 <div data-role="page" id="pessoas" data-theme="a" >
 
-	<?php echo Layout::imprimir_header("pessoas"); ?>
-
+	<?php echo Layout::imprimir_header("Pessoas", $nome_mesa, $nome_bar, $codigo_mesa); ?>
 
 	<div data-role="content">
-
-		<h1>Pessoas</h1>
 		
 		<a href="#" class="atualizar" id="atualizar_pessoas">Atualizar pessoas</a>
 		
@@ -32,8 +29,9 @@
 	        </a>
         </div>
         
-
     </div>
+
+    <?php echo Layout::imprimir_footer("pessoas"); ?>
 	
 </div>
 
