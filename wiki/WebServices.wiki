@@ -1,5 +1,10 @@
 #summary Serviços em raiz/scripts/
 
+= bares/informacoes.php =
+
+  * Recebe: id_bar
+  * Retorna: JSON contendo informações do bar
+
 = bares/recuperar_bares.php =
 
   * Recebe: nada
